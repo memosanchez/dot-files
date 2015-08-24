@@ -1,0 +1,23 @@
+BOLD=$(tput bold)
+RESET=$(tput sgr0)
+
+## ∴
+## →
+if [ -n "$SSH_CONNECTION" ]; then
+  USER_COLOR=$(tput setaf 48)
+  HOST_COLOR=$(tput setaf 49)
+  PATH_COLOR=$(tput setaf 50)
+  CHAR_COLOR=$(tput setaf 51)
+  PROMPT_CHAR="→"
+else
+  USER_COLOR=$(tput setaf 45)
+  HOST_COLOR=$(tput setaf 39)
+  PATH_COLOR=$(tput setaf 33)
+  CHAR_COLOR=$(tput setaf 27)
+  PROMPT_CHAR="→"
+fi
+
+export PS1="\[${BOLD}${USER_COLOR}\]\u\[${BOLD}${HOST_COLOR}\]@\h \[$PATH_COLOR\]\w \[$CHAR_COLOR\]$PROMPT_CHAR \[$RESET\]"
+export PS2="\[$ORANGE\]→ \[$RESET\]"
+
+unset HOST_COLOR

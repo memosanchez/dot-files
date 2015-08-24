@@ -1,0 +1,9 @@
+[user]
+  name = Guillermo A. Sanchez
+  email = memo.sanchez@gmail.com
+[core]
+  excludesfile = ~/.gitignore
+[color]
+  ui = auto
+[github]
+	user = memosanchez

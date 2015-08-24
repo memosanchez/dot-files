@@ -1,0 +1,8 @@
+shell -bash
+#caption always "%{= kc}Screen session on %H $STY (system load: %l)%-28=%{= .m}%D %d.%m.%Y %0c"
+#attrcolor b ".I"
+term xterm-256color
+#term screen-256color-bce
+#termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+# erase background with current bg color
+#defbce "on"

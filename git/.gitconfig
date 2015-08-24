@@ -8,3 +8,10 @@
   ui = auto
 [github]
 	user = memosanchez
+[alias]
+  b = branch
+  c = commit
+  co = checkout
+  st = status -s
+[push]
+  default = simple

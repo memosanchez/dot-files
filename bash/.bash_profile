@@ -1,4 +1,4 @@
-export LANG=en_US.UTF-8]
+export LANG=en_US.UTF-8
 
 for file in ~/.{bash_colors,bash_prompt}; do
   [ -r "$file" ] && source "$file"

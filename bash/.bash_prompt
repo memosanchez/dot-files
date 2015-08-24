@@ -18,6 +18,6 @@ else
 fi
 
 export PS1="\[${BOLD}${USER_COLOR}\]\u\[${BOLD}${HOST_COLOR}\]@\h \[$PATH_COLOR\]\w \[$CHAR_COLOR\]$PROMPT_CHAR \[$RESET\]"
-export PS2="\[$ORANGE\]→ \[$RESET\]"
+export PS2="\[$ORANGE\]$PROMPT_CHAR \[$RESET\]"
 
 unset HOST_COLOR

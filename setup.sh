@@ -1,13 +1,16 @@
-current_directory = $(pwd)
-#
-if [ -d $HOME/code/dot-files ]; then
-  cd $HOME/code/dot-files
-#   git pull origin master
+ #!/bin/bash
+
+current_directory=`pwd`
+script_directory=`dirname ${BASH_SOURCE}`
+
+if [ -d $script_directory ]; then
+  cd $script_directory
+  git pull origin master --quiet
 fi
 
-rsync -av bash/ $HOME
-rsync -av git/ $HOME
+rsync -avq bash/ $HOME
+rsync -avq git/ $HOME
 
+source $HOME/.bash_profile
 exec $SHELL
-source ~/.bash_profile
 cd $current_directory

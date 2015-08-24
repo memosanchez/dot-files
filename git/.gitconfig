@@ -3,6 +3,7 @@
   email = memo.sanchez@gmail.com
 [core]
   excludesfile = ~/.gitignore
+  pager=cat
 [color]
   ui = auto
 [github]

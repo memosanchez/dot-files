@@ -6,10 +6,14 @@ done
 unset file
 
 ## Make sure we have /usr/local/bin
-PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/bin:$PATH"
 
 ## Add user bin directory to path
-PATH="$HOME/bin:$PATH"
+export PATH="$HOME/bin:$PATH"
 
-# Check window size after each command and update if necessary
+## Check window size after each command and update if necessary
 shopt -s checkwinsize
+
+## Big ass history
+export HISTFILESIZE=10000
+export HISTSIZE=10000

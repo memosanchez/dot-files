@@ -5,6 +5,9 @@ for file in ~/.{bash_colors,bash_prompt}; do
 done
 unset file
 
+# Update window size after every command
+shopt -s checkwinsize
+
 ## Make sure we have /usr/local/bin
 export PATH="/usr/local/bin:$PATH"
 
@@ -15,5 +18,9 @@ export PATH="$HOME/bin:$PATH"
 shopt -s checkwinsize
 
 ## Big ass history
-export HISTFILESIZE=10000
-export HISTSIZE=10000
+shopt -s histappend
+shopt -s cmdhist
+export HISTFILESIZE=100000
+export HISTSIZE=500000
+export HISTCONTROL="erasedups:ignoreboth"
+export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"

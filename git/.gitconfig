@@ -13,5 +13,6 @@
   c = commit
   co = checkout
   st = status -s
+  lg = log --format='%Cred%h%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset%C(yellow)%d%Creset' --no-merges
 [push]
   default = simple

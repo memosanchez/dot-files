@@ -1,0 +1,28 @@
+-- Turn off messaging on connection
+\set QUIET 1
+
+-- Auto expand tables
+\x auto
+
+-- Show how long each query takes
+\timing
+
+-- Auto-complete to uppercase keywords
+\set COMP_KEYWORD_CASE upper
+
+-- Save history files with database name appended
+\set HISTFILE ~/.psql_history- :DBNAME
+
+-- Ignore duplicates in history
+\set HISTCONTROL ignoredups
+
+-- Turn off page
+\pset pager off
+
+-- Show nulls as something instead of a blank space
+\pset null Ø
+
+-- Verbose errors
+\set VERBOSITY verbose
+
+\unset QUIET

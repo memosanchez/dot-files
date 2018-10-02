@@ -1,10 +1,20 @@
-# .zshrc
+export ZSH="$HOME/.oh-my-zsh" # Path to Oh My Zsh
+
+# Oh My Zsh plugins
+plugins=(
+  gitfast
+  yarn
+)
+
+ZSH_THEME=""  # Disable ZSH Theme so we can use the Pure prompt
+
+source $ZSH/oh-my-zsh.sh # Activate Oh My Zsh
 
 # Pure Prompt
 autoload -U promptinit; promptinit
 prompt pure
 
-# Zsh cmopletions
+# Zsh completions
 fpath=(/usr/local/share/zsh-completions $fpath)
 
 # Syntax Highlighting

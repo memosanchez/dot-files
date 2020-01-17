@@ -14,6 +14,9 @@ ZSH_THEME=""  # Disable ZSH Theme so we can use the Pure prompt
 
 source $ZSH/oh-my-zsh.sh # Activate Oh My Zsh
 
+# Load zmv
+autoload -U zmv
+
 # Pure Prompt
 autoload -U promptinit; promptinit
 prompt pure

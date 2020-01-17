@@ -1,9 +1,13 @@
 export ZSH="$HOME/.oh-my-zsh" # Path to Oh My Zsh
+export PATH="/usr/local/sbin:$PATH"
 
 # Oh My Zsh plugins
 plugins=(
   gitfast
   yarn
+  node
+  npm
+  history
 )
 
 ZSH_THEME=""  # Disable ZSH Theme so we can use the Pure prompt
@@ -20,6 +24,7 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 # Syntax Highlighting
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+COMPLETION_WAITING_DOTS="true"
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000000
 SAVEHIST=10000000

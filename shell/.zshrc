@@ -3,6 +3,7 @@ export PATH="/usr/local/sbin:$PATH"
 
 # Oh My Zsh plugins
 plugins=(
+  git
   gitfast
   yarn
   node
@@ -11,6 +12,15 @@ plugins=(
 )
 
 ZSH_THEME=""  # Disable ZSH Theme so we can use the Pure prompt
+
+### completions from
+### https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+
+  autoload -Uz compinit
+  compinit
+fi
 
 source $ZSH/oh-my-zsh.sh # Activate Oh My Zsh
 
@@ -45,4 +55,9 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording en
 setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
 setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
-alias update="brew update && brew upgrade && npm update -g && apm update"
+alias update="brew update && brew upgrade && npm update -g && apm update && omz update"
+
+
+export CLOUDSDK_PYTHON="/usr/local/opt/python@3.8/libexec/bin/python"
+source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
+source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"

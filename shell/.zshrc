@@ -55,7 +55,7 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording en
 setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
 setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
-alias update="brew update && brew upgrade && npm update -g && apm update && omz update"
+alias update="brew update && brew upgrade && npm update -g && omz update"
 
 
 export CLOUDSDK_PYTHON="/usr/local/opt/python@3.8/libexec/bin/python"

@@ -1,42 +1,14 @@
-export ZSH="$HOME/.oh-my-zsh" # Path to Oh My Zsh
-export PATH="/usr/local/sbin:$PATH"
-
-# Oh My Zsh plugins
-plugins=(
-  git
-  gitfast
-  yarn
-  node
-  npm
-  history
-)
-
-ZSH_THEME=""  # Disable ZSH Theme so we can use the Pure prompt
-
-### completions from
-### https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+# Homebrew
+# ** Needs to happen before calling oh-my-zsh
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
   autoload -Uz compinit
   compinit
 fi
 
-source $ZSH/oh-my-zsh.sh # Activate Oh My Zsh
-
-# Load zmv
-autoload -U zmv
-
-# Pure Prompt
-autoload -U promptinit; promptinit
-prompt pure
-
-# Zsh completions
-fpath=(/usr/local/share/zsh-completions $fpath)
-
-# Syntax Highlighting
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
+# Options
 COMPLETION_WAITING_DOTS="true"
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000000
@@ -55,9 +27,18 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording en
 setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
 setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
-alias update="brew update && brew upgrade && npm update -g && omz update"
+# Oh my Zsh
+export ZSH="$HOME/.oh-my-zsh"
+zstyle ':omz:update' mode auto
+plugins=(
+  git
+  zsh-syntax-highlighting  # Needs to be installed via homebrew or https://github.com/zsh-users/zsh-syntax-highlighting.git
+)
+source $ZSH/oh-my-zsh.sh
 
+# Initialize prompt system
+autoload -U promptinit; promptinit
 
-export CLOUDSDK_PYTHON="/usr/local/opt/python@3.8/libexec/bin/python"
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
+# Set prompt
+ZSH_THEME="" # Disable OMZ tehme
+prompt pure

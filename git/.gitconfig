@@ -1,18 +1,94 @@
+# Basic user information
 [user]
   name = Guillermo A. Sanchez
   email = memo.sanchez@gmail.com
+
 [core]
+  # Global gitignore file location
   excludesfile = ~/.gitignore
-  pager=cat
+  
+  # Use less instead of cat with options:
+  # -F: quit if output fits on one screen
+  # -R: allow ANSI color codes
+  # -X: don't clear screen when exiting
+  pager = less -FRX
+  
+  # Convert CRLF to LF on commit but not the other way around
+  # Prevents Windows/Unix line ending issues
+  autocrlf = input
+  
+  # Warn about problematic whitespace
+  # Helps catch common formatting issues early
+  whitespace = trailing-space,space-before-tab
+
 [color]
+  # Enable color in Git output when possible
   ui = auto
+
 [github]
-	user = memosanchez
+  user = memosanchez
+
 [alias]
+  # Shorter commands for common operations
   b = branch
   c = commit
   co = checkout
   st = status -s
+  
+  # Pretty log format with colors and concise information
   lg = log --format='%Cred%h%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset%C(yellow)%d%Creset' --no-merges
+  
+  # Unstage files - safer than using reset directly
+  unstage = reset HEAD --
+  
+  # Show the last commit details
+  last = log -1 HEAD
+  
+  # Launch the visual Git browser
+  visual = !gitk
+
 [push]
+  # Push only the current branch to the upstream branch
   default = simple
+  
+  # Automatically set up the remote branch when pushing
+  # Eliminates the need for --set-upstream
+  autoSetupRemote = true
+
+[pull]
+  # Use rebase instead of merge when pulling
+  # Keeps history cleaner by avoiding merge commits
+  rebase = true
+
+[rebase]
+  # Automatically handle commits with fixup! or squash!
+  # Makes interactive rebases more powerful
+  autosquash = true
+  
+  # Automatically stash and unstash changes when rebasing
+  # Prevents errors when rebasing with uncommitted changes
+  autostash = true
+
+[diff]
+  # Use patience algorithm for better diffs
+  # Produces more intuitive and readable diffs, especially for moved code
+  algorithm = patience
+  
+  # Highlight moved code blocks in diffs
+  # Makes it easier to see code that was relocated rather than changed
+  colorMoved = default
+
+[merge]
+  # Show original, current and incoming changes in conflicts
+  # Makes conflicts easier to resolve by showing more context
+  conflictstyle = diff3
+
+[help]
+  # Automatically run mistyped commands after 2 seconds
+  # Value is in deciseconds (1/10 of a second)
+  autocorrect = 20
+
+[init]
+  # Use 'main' as the default branch name for new repositories
+  # Follows modern naming conventions
+  defaultBranch = main

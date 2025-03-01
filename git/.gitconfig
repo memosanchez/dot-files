@@ -2,31 +2,10 @@
 [user]
   name = Guillermo A. Sanchez
   email = memo.sanchez@gmail.com
-
-[core]
-  # Global gitignore file location
-  excludesfile = ~/.gitignore
   
-  # Use less instead of cat with options:
-  # -F: quit if output fits on one screen
-  # -R: allow ANSI color codes
-  # -X: don't clear screen when exiting
-  pager = less -FRX
-  
-  # Convert CRLF to LF on commit but not the other way around
-  # Prevents Windows/Unix line ending issues
-  autocrlf = input
-  
-  # Warn about problematic whitespace
-  # Helps catch common formatting issues early
-  whitespace = trailing-space,space-before-tab
-
-[color]
-  # Enable color in Git output when possible
-  ui = auto
-
 [github]
   user = memosanchez
+
 
 [alias]
   # Shorter commands for common operations
@@ -46,6 +25,27 @@
   
   # Launch the visual Git browser
   visual = !gitk
+  
+  # Show a compact log with graph
+  graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+
+[core]
+  # Global gitignore file location
+  excludesfile = ~/.gitignore
+  
+  # Use less instead of cat with options:
+  # -F: quit if output fits on one screen
+  # -R: allow ANSI color codes
+  # -X: don't clear screen when exiting
+  pager = less -FRX
+  
+[color]
+  # Enable color in Git output when possible
+  ui = auto
+
+[column]
+  ui = auto
 
 [push]
   # Push only the current branch to the upstream branch
@@ -55,10 +55,24 @@
   # Eliminates the need for --set-upstream
   autoSetupRemote = true
 
+  followTags = true
+
 [pull]
   # Use rebase instead of merge when pulling
   # Keeps history cleaner by avoiding merge commits
   rebase = true
+  
+  # Automatically create a temporary stash entry before pulling
+  # Prevents conflicts with local changes
+  autostash = true
+
+[fetch]
+  # Automatically prune deleted remote branches when fetching
+  # Keeps your remote tracking branches clean
+  prune = true
+  
+  pruneTags = true
+  all = true
 
 [rebase]
   # Automatically handle commits with fixup! or squash!
@@ -68,27 +82,56 @@
   # Automatically stash and unstash changes when rebasing
   # Prevents errors when rebasing with uncommitted changes
   autostash = true
+  
+  # Update refs that would be pushed during interactive rebase
+  updateRefs = true
 
 [diff]
-  # Use patience algorithm for better diffs
-  # Produces more intuitive and readable diffs, especially for moved code
-  algorithm = patience
-  
-  # Highlight moved code blocks in diffs
-  # Makes it easier to see code that was relocated rather than changed
-  colorMoved = default
+  algorithm = histogram
+  colorMoved = plain
+  mnemonicPrefix = true
+  renames = true
 
 [merge]
   # Show original, current and incoming changes in conflicts
   # Makes conflicts easier to resolve by showing more context
   conflictstyle = diff3
+  
+  # Always create a merge commit when merging
+  # Preserves the fact that a merge occurred
+  ff = false
 
 [help]
-  # Automatically run mistyped commands after 2 seconds
-  # Value is in deciseconds (1/10 of a second)
-  autocorrect = 20
+  autocorrect = prompt
 
 [init]
   # Use 'main' as the default branch name for new repositories
   # Follows modern naming conventions
   defaultBranch = main
+
+[status]
+  # Show the number of stashes in git status
+  # Helps you remember if you have stashed changes
+  showStash = true
+
+[branch]
+  # Sort branches by their most recent commit
+  # Makes branch listings more useful
+  sort = -committerdate
+
+[tag]
+  # Sort tags by version number
+  # Makes tag listings more intuitive
+  sort = version:refname
+
+[credential]
+  # Cache credentials for 15 minutes
+  # Reduces how often you need to enter passwords
+  helper = cache --timeout=900
+
+[commit]
+  verbose = true
+
+[rerere]
+  enabled = true
+  autoupdate = true

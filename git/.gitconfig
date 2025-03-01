@@ -5,6 +5,16 @@
 [github]
   user = memosanchez
 
+[core]
+  # Global gitignore file location
+  excludesfile = ~/.gitignore
+  
+  # Use less instead of cat with options:
+  # -F: quit if output fits on one screen
+  # -R: allow ANSI color codes
+  # -X: don't clear screen when exiting
+  pager = less -FRX
+
 [alias]
   # Shorter commands for common operations
   b = branch
@@ -26,17 +36,6 @@
   
   # Show a compact log with graph
   graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-
-
-[core]
-  # Global gitignore file location
-  excludesfile = ~/.gitignore
-  
-  # Use less instead of cat with options:
-  # -F: quit if output fits on one screen
-  # -R: allow ANSI color codes
-  # -X: don't clear screen when exiting
-  pager = less -FRX
   
 [color]
   # Enable color in Git output when possible

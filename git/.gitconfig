@@ -1,11 +1,9 @@
-# Basic user information
 [user]
   name = Guillermo A. Sanchez
   email = memo.sanchez@gmail.com
   
 [github]
   user = memosanchez
-
 
 [alias]
   # Shorter commands for common operations
@@ -45,6 +43,8 @@
   ui = auto
 
 [column]
+  # Automatically format command output into columns when appropriate
+  # Improves readability of commands like git branch
   ui = auto
 
 [push]
@@ -55,6 +55,8 @@
   # Eliminates the need for --set-upstream
   autoSetupRemote = true
 
+  # Automatically push tags when pushing branches
+  # Ensures your tags are shared along with your commits
   followTags = true
 
 [pull]
@@ -71,7 +73,12 @@
   # Keeps your remote tracking branches clean
   prune = true
   
+  # Also prune tags that no longer exist on the remote
+  # Keeps your tags in sync with remote repository
   pruneTags = true
+  
+  # Fetch from all remotes when running git fetch
+  # Ensures you have the latest state from all remotes
   all = true
 
 [rebase]
@@ -87,9 +94,20 @@
   updateRefs = true
 
 [diff]
+  # Use histogram algorithm for better diffs
+  # An improved version of patience algorithm that's faster and handles some edge cases better
   algorithm = histogram
+  
+  # Highlight moved code blocks in diffs with plain style
+  # Makes it easier to see code that was relocated rather than changed
   colorMoved = plain
+  
+  # Use a/b/c instead of old/new in diff output
+  # Makes it easier to remember which side is which
   mnemonicPrefix = true
+  
+  # Detect renamed files in diffs
+  # Shows files as renamed rather than as deleted and added
   renames = true
 
 [merge]
@@ -102,6 +120,8 @@
   ff = false
 
 [help]
+  # Prompt before automatically running mistyped commands
+  # Gives you a chance to confirm before executing a corrected command
   autocorrect = prompt
 
 [init]
@@ -130,8 +150,15 @@
   helper = cache --timeout=900
 
 [commit]
+  # Show diff in the commit message editor
+  # Helps you write better commit messages by seeing what you're committing
   verbose = true
 
 [rerere]
+  # Reuse recorded resolution of conflicted merges
+  # Remembers how you resolved conflicts so you don't have to resolve them again
   enabled = true
+  
+  # Automatically stage files that were resolved using recorded resolution
+  # Saves you from having to manually add resolved files
   autoupdate = true

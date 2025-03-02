@@ -1,18 +1,142 @@
 [user]
   name = Guillermo A. Sanchez
   email = memo.sanchez@gmail.com
-[core]
-  excludesfile = ~/.gitignore
-  pager=cat
-[color]
-  ui = auto
+  
 [github]
-	user = memosanchez
+  user = memosanchez
+
+[core]
+  # Global gitignore file location
+  excludesfile = ~/.gitignore
+  
+  # Use less instead of cat with options:
+  # -F: quit if output fits on one screen
+  # -R: allow ANSI color codes
+  # -X: don't clear screen when exiting
+  pager = less -FRX
+
 [alias]
+  # Shorter commands for common operations
   b = branch
   c = commit
   co = checkout
   st = status -s
+  
+  # Pretty log format with colors and concise information
   lg = log --format='%Cred%h%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset%C(yellow)%d%Creset' --no-merges
+  
+  # Unstage files - safer than using reset directly
+  unstage = reset HEAD --
+  
+  # Show the last commit details
+  last = log -1 HEAD
+    
+  # Show a compact log with graph
+  graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  
+[color]
+  # Enable color in Git output when possible
+  ui = auto
+
+[column]
+  # Automatically format command output into columns when appropriate
+  # Improves readability of commands like git branch
+  ui = auto
+
 [push]
+  # Push only the current branch to the upstream branch
   default = simple
+  
+  # Automatically set up the remote branch when pushing
+  # Eliminates the need for --set-upstream
+  autoSetupRemote = true
+
+  # Automatically push tags when pushing branches
+  # Ensures your tags are shared along with your commits
+  followTags = true
+
+[pull]
+  # Use rebase instead of merge when pulling
+  # Keeps history cleaner by avoiding merge commits
+  # rebase = true
+
+[fetch]
+  # Automatically prune deleted remote branches when fetching
+  # Keeps your remote tracking branches clean
+  prune = true
+  
+  # Also prune tags that no longer exist on the remote
+  # Keeps your tags in sync with remote repository
+  pruneTags = true
+  
+  # Fetch from all remotes when running git fetch
+  # Ensures you have the latest state from all remotes
+  all = true
+
+[rebase]
+  # Automatically handle commits with fixup! or squash!
+  # Makes interactive rebases more powerful
+  # autoSquash = true
+  
+  # Automatically stash and unstash changes when rebasing
+  # Prevents errors when rebasing with uncommitted changes
+  autoStash = true
+  
+  # Update refs that would be pushed during interactive rebase
+  updateRefs = true
+
+[diff]
+  # Use histogram algorithm for better diffs
+  # An improved version of patience algorithm that's faster and handles some edge cases better
+  algorithm = histogram
+  
+  # Highlight moved code blocks in diffs with plain style
+  # Makes it easier to see code that was relocated rather than changed
+  colorMoved = plain
+  
+  # Use a/b/c instead of old/new in diff output
+  # Makes it easier to remember which side is which
+  mnemonicPrefix = true
+  
+  # Detect renamed files in diffs
+  # Shows files as renamed rather than as deleted and added
+  renames = true
+
+[help]
+  # Prompt before automatically running mistyped commands
+  # Gives you a chance to confirm before executing a corrected command
+  autocorrect = prompt
+
+[init]
+  # Use 'main' as the default branch name for new repositories
+  # Follows modern naming conventions
+  defaultBranch = main
+
+[status]
+  # Show the number of stashes in git status
+  # Helps you remember if you have stashed changes
+  showStash = true
+
+[branch]
+  # Sort branches by their most recent commit
+  # Makes branch listings more useful
+  sort = -committerdate
+
+[tag]
+  # Sort tags by version number
+  # Makes tag listings more intuitive
+  sort = version:refname
+
+[commit]
+  # Show diff in the commit message editor
+  # Helps you write better commit messages by seeing what you're committing
+  verbose = true
+
+[rerere]
+  # Reuse recorded resolution of conflicted merges
+  # Remembers how you resolved conflicts so you don't have to resolve them again
+  enabled = true
+  
+  # Automatically stage files that were resolved using recorded resolution
+  # Saves you from having to manually add resolved files
+  autoupdate = true

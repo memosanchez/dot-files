@@ -58,11 +58,7 @@
 [pull]
   # Use rebase instead of merge when pulling
   # Keeps history cleaner by avoiding merge commits
-  rebase = true
-  
-  # Automatically create a temporary stash entry before pulling
-  # Prevents conflicts with local changes
-  autostash = true
+  # rebase = true
 
 [fetch]
   # Automatically prune deleted remote branches when fetching
@@ -80,11 +76,11 @@
 [rebase]
   # Automatically handle commits with fixup! or squash!
   # Makes interactive rebases more powerful
-  autosquash = true
+  # autoSquash = true
   
   # Automatically stash and unstash changes when rebasing
   # Prevents errors when rebasing with uncommitted changes
-  autostash = true
+  autoStash = true
   
   # Update refs that would be pushed during interactive rebase
   updateRefs = true
@@ -105,15 +101,6 @@
   # Detect renamed files in diffs
   # Shows files as renamed rather than as deleted and added
   renames = true
-
-[merge]
-  # Show original, current and incoming changes in conflicts
-  # Makes conflicts easier to resolve by showing more context
-  conflictstyle = diff3
-  
-  # Always create a merge commit when merging
-  # Preserves the fact that a merge occurred
-  ff = false
 
 [help]
   # Prompt before automatically running mistyped commands
@@ -139,11 +126,6 @@
   # Sort tags by version number
   # Makes tag listings more intuitive
   sort = version:refname
-
-[credential]
-  # Cache credentials for 15 minutes
-  # Reduces how often you need to enter passwords
-  helper = cache --timeout=900
 
 [commit]
   # Show diff in the commit message editor

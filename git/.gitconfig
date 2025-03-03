@@ -20,7 +20,7 @@
   b = branch
   c = commit
   co = checkout
-  st = status -s
+  st = status -s # Short status with branch information
   
   # Pretty log format with colors and concise information
   lg = log --format='%Cred%h%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset%C(yellow)%d%Creset' --no-merges

@@ -9,11 +9,8 @@
   # Global gitignore file location
   excludesfile = ~/.gitignore
   
-  # Use less instead of cat with options:
-  # -F: quit if output fits on one screen
-  # -R: allow ANSI color codes
-  # -X: don't clear screen when exiting
-  pager = less -FRX
+  # Use cat as pager for simple output
+  pager = cat
 
 [alias]
   # Shorter commands for common operations
@@ -31,8 +28,8 @@
   # Show the last commit details
   last = log -1 HEAD
     
-  # Show a compact log with graph
-  graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  # Show a compact log with graph (last 100 commits only)
+  graph = log -n 100 --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
   
   # Uncommit - Reset the last commit while keeping changes staged
   uncommit = reset --soft HEAD~1

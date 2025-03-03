@@ -32,9 +32,15 @@ export ZSH="$HOME/.oh-my-zsh"
 zstyle ':omz:update' mode auto
 plugins=(
   git
-  zsh-syntax-highlighting  # Needs to be installed via homebrew or https://github.com/zsh-users/zsh-syntax-highlighting.git
+  zsh-autosuggestion
+  # zsh-syntax-highlighting  # Needs to be installed via homebrew or https://github.com/zsh-users/zsh-syntax-highlighting.git
 )
 source $ZSH/oh-my-zsh.sh
+
+# Node Version Manager
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # Initialize prompt system
 autoload -U promptinit; promptinit
@@ -42,3 +48,15 @@ autoload -U promptinit; promptinit
 # Set prompt
 ZSH_THEME="" # Disable OMZ tehme
 prompt pure
+
+# The OMZ plugin step above was not working so tried this
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# libpq
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"

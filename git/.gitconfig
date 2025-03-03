@@ -19,8 +19,8 @@
   co = checkout
   st = status -s # Short status with branch information
   
-  # Pretty log format with colors and concise information
-  lg = log --format='%Cred%h%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset%C(yellow)%d%Creset' --no-merges
+  # Pretty log format with colors and concise information - reverse order (newest at bottom)
+  lg = log --format='%Cred%h%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset%C(yellow)%d%Creset' --no-merges --reverse
   
   # Unstage files - safer than using reset directly
   unstage = reset HEAD --

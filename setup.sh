@@ -19,7 +19,7 @@ if [ -d "$script_directory" ]; then
   cd "$script_directory" || { echo "❌ Oops! Couldn't access the script directory."; exit 1; }
   
   echo "🔄 Fetching the latest updates from the repository..."
-  git pull origin master --quiet || { echo "❌ Git pull failed. Are you connected to the internet?"; exit 1; }
+  git pull origin main --quiet || { echo "❌ Git pull failed. Are you connected to the internet?"; exit 1; }
 fi
 
 echo "🐚 Copying shell configuration files to home directory..."

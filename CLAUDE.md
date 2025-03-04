@@ -3,7 +3,7 @@
 ## Commands
 
 - `./setup.sh` - Main setup script that syncs configurations to your home directory
-- `git pull origin master` - Update the repository with latest changes
+- `git pull origin main` - Update the repository with latest changes
 
 ## Repository Structure
 
@@ -13,8 +13,13 @@
 
 ## Coding Conventions
 
-- Shell scripts should use bash (`#!/usr/bin/env bash`)
-- Add descriptive comments for complex commands
+- Shell scripts use bash shebang (`#!/usr/bin/env bash`)
+- Use safety flags in scripts (`set -euo pipefail`)
+- Add detailed comments for complex commands and functions
 - Use meaningful variable names (e.g., `current_directory`, `script_directory`)
-- Add emoji indicators in console output messages for visual cues
-- Include detailed error messages that suggest possible solutions
+- Include emoji indicators in console output (🔄, 🐚, 🔧, ✅, ❌)
+- Provide helpful error messages with possible solutions
+- Use rsync for copying files with appropriate flags
+- Implement defensive coding with proper exit handling
+- Maintain original context (return to starting directory)
+- Use proper parameter expansion with quotes (${var})

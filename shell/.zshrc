@@ -32,7 +32,7 @@ export ZSH="$HOME/.oh-my-zsh"
 zstyle ':omz:update' mode auto
 plugins=(
   git
-  zsh-autosuggestion
+  zsh-autosuggestions
   # zsh-syntax-highlighting  # Needs to be installed via homebrew or https://github.com/zsh-users/zsh-syntax-highlighting.git
 )
 source $ZSH/oh-my-zsh.sh

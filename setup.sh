@@ -13,6 +13,11 @@ current_directory="$(pwd)"
 # ${...}: Parameter expansion syntax
 script_directory="$(dirname "${BASH_SOURCE[0]}")"
 
+# Create timestamped backup directory
+backup_directory="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$backup_directory"
+echo "📦 Creating backup at: $backup_directory"
+
 
 # Check if script directory exists and perform git pull
 if [ -d "$script_directory" ]; then
@@ -34,7 +39,7 @@ if [ -d "$script_directory" ]; then
 fi
 
 echo "🐚 Copying shell configuration files to home directory..."
-rsync -avq --no-perms shell/ "$HOME" || { echo "❌ Shell configuration sync failed. Check permissions?"; exit 1; }
+rsync -avq --no-perms --backup --backup-dir="$backup_directory/shell" shell/ "$HOME" || { echo "❌ Shell configuration sync failed. Check permissions?"; exit 1; }
 # rsync: Remote sync tool for copying files
 # -a: Archive mode (equivalent to -rlptgoD) - preserves almost everything
 #     -r: Recursive (include subdirectories)
@@ -47,14 +52,22 @@ rsync -avq --no-perms shell/ "$HOME" || { echo "❌ Shell configuration sync fai
 # -v: Verbose output
 # -q: Quiet mode (suppresses non-error messages)
 # --no-perms: Don't preserve permissions
+# --backup: Create backups of files that would be overwritten
+# --backup-dir: Specify where to store backup files
 
 echo "🔧 Setting up git configuration files..."
-rsync -avq --no-perms git/ "$HOME" || { echo "❌ Git configuration sync failed. Check permissions?"; exit 1; }
+rsync -avq --no-perms --backup --backup-dir="$backup_directory/git" git/ "$HOME" || { echo "❌ Git configuration sync failed. Check permissions?"; exit 1; }
 
 echo "🤖 Setting up Claude configuration..."
-rsync -avq --no-perms claude/ "$HOME" || { echo "❌ Claude configuration sync failed. Check permissions?"; exit 1; }
+rsync -avq --no-perms --backup --backup-dir="$backup_directory/claude" claude/ "$HOME" || { echo "❌ Claude configuration sync failed. Check permissions?"; exit 1; }
 
 # Return to the original directory
 cd "$current_directory" || { echo "❌ Couldn't return to where you started."; exit 1; }
+
+# Check if any files were backed up
+if [ -d "$backup_directory" ] && [ "$(find "$backup_directory" -type f 2>/dev/null | head -1)" ]; then
+  echo "💾 Backed up existing files to: $backup_directory"
+  echo "   To restore: cp -r $backup_directory/* $HOME/"
+fi
 
 echo "✅ Done."

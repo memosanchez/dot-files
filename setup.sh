@@ -40,6 +40,9 @@ rsync -avq --no-perms shell/ "$HOME" || { echo "❌ Shell configuration sync fai
 echo "🔧 Setting up git configuration files..."
 rsync -avq --no-perms git/ "$HOME" || { echo "❌ Git configuration sync failed. Check permissions?"; exit 1; }
 
+echo "🤖 Setting up Claude configuration..."
+rsync -avq --no-perms claude/ "$HOME" || { echo "❌ Claude configuration sync failed. Check permissions?"; exit 1; }
+
 # Return to the original directory
 cd "$current_directory" || { echo "❌ Couldn't return to where you started."; exit 1; }
 

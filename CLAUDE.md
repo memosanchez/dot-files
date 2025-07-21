@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `./setup.sh` - Main setup script that syncs configurations to your home directory
   - Performs git pull to fetch latest changes
-  - Copies shell/ and git/ directories to $HOME using rsync
+  - Copies shell/, git/, and claude/ directories to $HOME using rsync
   - Returns to original directory after completion
 - `git pull origin main` - Update the repository with latest changes before running setup
 
@@ -25,6 +25,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `git/` - Git configuration files
   - `.gitconfig` - Global git configuration
   - `.gitignore` - Global gitignore rules
+- `claude/` - Claude Code configuration files
+  - `.claude/settings.json` - User-level Claude Code settings
 
 ### Scripts
 - `setup.sh` - Installation script with safety features and error handling

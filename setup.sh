@@ -18,6 +18,17 @@ script_directory="$(dirname "${BASH_SOURCE[0]}")"
 if [ -d "$script_directory" ]; then
   cd "$script_directory" || { echo "❌ Oops! Couldn't access the script directory."; exit 1; }
   
+  # Check for uncommitted changes
+  if git status --porcelain | grep -q .; then
+    echo "⚠️  Warning: You have uncommitted changes in this repository."
+    read -p "   Continue anyway? (y/N) " -n 1 -r
+    echo # Move to a new line
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      echo "❌ Setup cancelled. Please commit or stash your changes first."
+      exit 1
+    fi
+  fi
+  
   echo "🔄 Fetching the latest updates from the repository..."
   git pull origin main --quiet || { echo "❌ Git pull failed. Are you connected to the internet?"; exit 1; }
 fi

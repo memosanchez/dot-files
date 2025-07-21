@@ -1,15 +1,46 @@
-# CLAUDE.md - Dot-Files Repository Guide
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Commands
 
 - `./setup.sh` - Main setup script that syncs configurations to your home directory
-- `git pull origin main` - Update the repository with latest changes
+  - Performs git pull to fetch latest changes
+  - Copies shell/ and git/ directories to $HOME using rsync
+  - Returns to original directory after completion
+- `git pull origin main` - Update the repository with latest changes before running setup
 
 ## Repository Structure
 
-- `shell/` - Contains shell configuration files that get copied to $HOME
-- `git/` - Contains git configuration files that get copied to $HOME
-- `setup.sh` - Main script for installation and updates
+### Configuration Directories
+- `shell/` - Shell configuration files (bash, zsh, readline, screen, psql)
+  - `.bash_profile` - Bash login shell configuration
+  - `.bash_prompt` - Custom bash prompt configuration  
+  - `.zshrc` - Z shell configuration
+  - `.zprofile` - Z shell profile configuration
+  - `.inputrc` - Readline library configuration
+  - `.screenrc` - GNU Screen configuration
+  - `.psqlrc` - PostgreSQL client configuration
+  - `.pg_format` - PostgreSQL formatter configuration
+- `git/` - Git configuration files
+  - `.gitconfig` - Global git configuration
+  - `.gitignore` - Global gitignore rules
+
+### Scripts
+- `setup.sh` - Installation script with safety features and error handling
+  - Uses `set -euo pipefail` for robust execution
+  - Provides contextual error messages with emoji indicators
+  - Preserves working directory context
+
+## Architecture
+
+This is a dotfiles management repository that:
+1. Centralizes shell and git configurations in version control
+2. Uses rsync for efficient, permission-preserving file synchronization
+3. Implements defensive scripting practices to prevent common errors
+4. Provides clear feedback during installation process
+
+The setup process is idempotent - running it multiple times is safe and will update configurations to the latest version.
 
 ## Coding Conventions
 
@@ -19,7 +50,7 @@
 - Use meaningful variable names (e.g., `current_directory`, `script_directory`)
 - Include emoji indicators in console output (🔄, 🐚, 🔧, ✅, ❌)
 - Provide helpful error messages with possible solutions
-- Use rsync for copying files with appropriate flags
+- Use rsync with `-avq --no-perms` flags for file copying
 - Implement defensive coding with proper exit handling
 - Maintain original context (return to starting directory)
-- Use proper parameter expansion with quotes (${var})
+- Use proper parameter expansion with quotes (`"${var}"`)

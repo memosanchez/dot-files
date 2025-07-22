@@ -61,7 +61,7 @@ rsync -avq --no-perms --backup --backup-dir="$backup_directory/git" git/ "$HOME"
 echo "🤖 Setting up Claude configuration..."
 mkdir -p "$HOME/.claude" || { echo "❌ Failed to create .claude directory. Check permissions?"; exit 1; }
 if [ -f "$HOME/.claude/settings.json" ]; then
-  cp "$HOME/.claude/settings.json" "$backup_directory/claude-settings.json" || true
+  cp "$HOME/.claude/settings.json" "$backup_directory/claude-settings.json" || echo "⚠️  Warning: Could not backup existing settings.json"
 fi
 cp claude/settings.json "$HOME/.claude/settings.json" || { echo "❌ Claude configuration copy failed. Check permissions?"; exit 1; }
 

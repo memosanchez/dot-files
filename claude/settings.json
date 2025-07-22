@@ -1,0 +1,17 @@
+{
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run test)",
+      "Bash(npm run build)",
+      "Bash(npm run typecheck)",
+      "Bash(pnpm run lint)",
+      "Bash(pnpm run test)",
+      "Bash(pnpm run build)",
+      "Bash(pnpm run typecheck)"
+    ],
+    "deny": []
+  },
+  "env": {}
+}

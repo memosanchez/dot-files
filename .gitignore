@@ -1,0 +1,5 @@
+# macOS
+.DS_Store
+
+# Claude Code - ignore top-level .claude directory
+.claude/settings.local.json

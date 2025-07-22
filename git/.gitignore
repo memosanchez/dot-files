@@ -7,4 +7,4 @@ node_modules
 *.orig
 *.db
 TODO
-CLAUDE.md
+.claude/settings.local.json

@@ -59,7 +59,11 @@ echo "🔧 Setting up git configuration files..."
 rsync -avq --no-perms --backup --backup-dir="$backup_directory/git" git/ "$HOME" || { echo "❌ Git configuration sync failed. Check permissions?"; exit 1; }
 
 echo "🤖 Setting up Claude configuration..."
-rsync -avq --no-perms --backup --backup-dir="$backup_directory/claude" claude/ "$HOME" || { echo "❌ Claude configuration sync failed. Check permissions?"; exit 1; }
+mkdir -p "$HOME/.claude" || { echo "❌ Failed to create .claude directory. Check permissions?"; exit 1; }
+if [ -f "$HOME/.claude/settings.json" ]; then
+  cp "$HOME/.claude/settings.json" "$backup_directory/claude-settings.json" || true
+fi
+cp claude/settings.json "$HOME/.claude/settings.json" || { echo "❌ Claude configuration copy failed. Check permissions?"; exit 1; }
 
 # Return to the original directory
 cd "$current_directory" || { echo "❌ Couldn't return to where you started."; exit 1; }

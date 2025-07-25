@@ -21,3 +21,4 @@ The `setup.sh` script handles the installation process:
 
 - `shell/` - Shell configuration files
 - `git/` - Git configuration files
+- `claude/` - Claude Code configuration files

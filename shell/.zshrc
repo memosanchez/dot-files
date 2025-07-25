@@ -78,4 +78,4 @@ esac
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 # CLAUDE
-alias claude="/Users/memo/.claude/local/claude"
+alias claude="$HOME/.claude/local/claude"

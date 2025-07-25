@@ -7,11 +7,13 @@
 #   compinit
 # fi
 
-# Options
+# Environment Variables
 COMPLETION_WAITING_DOTS="true"
-HISTFILE="$HOME/.zsh_history"
-HISTSIZE=10000000
-SAVEHIST=10000000
+export HISTFILE="$HOME/.zsh_history"
+export HISTSIZE=10000000
+export SAVEHIST=10000000
+
+## History Options
 setopt BANG_HIST                 # Treat the '!' character specially during expansion.
 setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
 setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
@@ -28,6 +30,7 @@ setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
 # Oh my Zsh
 export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="" # Disable OMZ theme
 
 # Automatically updates Oh My Zsh when a new version is available
 zstyle ':omz:update' mode auto
@@ -38,12 +41,10 @@ plugins=(
 )
 source $ZSH/oh-my-zsh.sh
 
-
 # Initialize prompt system
 autoload -U promptinit; promptinit
 
 # Set prompt
-ZSH_THEME="" # Disable OMZ theme
 prompt pure
 
 # ZSH Plugins from Homebrew
@@ -59,23 +60,29 @@ if ! brew list zsh-autosuggestions &>/dev/null; then
   brew install zsh-autosuggestions
 fi
 
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# Source ZSH plugins if they exist
+[ -f "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && \
+  source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && \
+  source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # Node Version Manager
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
-# pnpm
+# Path Management
+## pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+if [ -d "$PNPM_HOME" ]; then
+  case ":$PATH:" in
+    *":$PNPM_HOME:"*) ;;
+    *) export PATH="$PNPM_HOME:$PATH" ;;
+  esac
+fi
 
-# libpq
-export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+## libpq
+[ -d "/opt/homebrew/opt/libpq/bin" ] && export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 # CLAUDE
 alias claude="$HOME/.claude/local/claude"

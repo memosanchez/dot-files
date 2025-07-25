@@ -1,11 +1,8 @@
 # Homebrew
-# ** Needs to happen before calling oh-my-zsh
-# if type brew &>/dev/null
-# then
-#   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-#   autoload -Uz compinit
-#   compinit
-# fi
+# Cache brew prefix for performance
+if command -v brew &>/dev/null; then
+  export HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
+fi
 
 # Environment Variables
 COMPLETION_WAITING_DOTS="true"
@@ -31,40 +28,41 @@ setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 # Oh my Zsh
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="" # Disable OMZ theme
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+# Function to ensure plugin is installed
+ensure_plugin() {
+  local plugin_name="$1"
+  local plugin_repo="$2"
+  if [[ ! -d "$ZSH_CUSTOM/plugins/$plugin_name" ]]; then
+    echo "Installing $plugin_name..."
+    git clone "$plugin_repo" "$ZSH_CUSTOM/plugins/$plugin_name" --quiet
+  fi
+}
+
+# Only check/install if the directories don't exist (fast check)
+[[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]] && ensure_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions"
+[[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]] && ensure_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting"
 
 # Automatically updates Oh My Zsh when a new version is available
 zstyle ':omz:update' mode auto
 plugins=(
   git
-  # zsh-autosuggestions
-  # zsh-syntax-highlighting  # Needs to be installed via homebrew or https://github.com/zsh-users/zsh-syntax-highlighting.git
+  zsh-autosuggestions
+  zsh-syntax-highlighting
 )
 source $ZSH/oh-my-zsh.sh
+
+# Homebrew completions (after Oh My Zsh to avoid double compinit)
+if [[ -n "$HOMEBREW_PREFIX" ]] && [[ -d "$HOMEBREW_PREFIX/share/zsh/site-functions" ]]; then
+  FPATH="$HOMEBREW_PREFIX/share/zsh/site-functions:${FPATH}"
+fi
 
 # Initialize prompt system
 autoload -U promptinit; promptinit
 
 # Set prompt
 prompt pure
-
-# ZSH Plugins from Homebrew
-# Check if zsh-autosuggestions is installed
-if ! brew list zsh-syntax-highlighting &>/dev/null; then
-  echo "Installing zsh-syntax-highlighting..."
-  brew install zsh-syntax-highlighting
-fi
-
-# Check if zsh-autosuggestions is installed
-if ! brew list zsh-autosuggestions &>/dev/null; then
-  echo "Installing zsh-autosuggestions..."
-  brew install zsh-autosuggestions
-fi
-
-# Source ZSH plugins if they exist
-[ -f "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && \
-  source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && \
-  source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # Node Version Manager
 export NVM_DIR="$HOME/.nvm"

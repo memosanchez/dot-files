@@ -88,5 +88,5 @@ fi
 
 # Aliases
 ## Claude Code CLI
-alias claude="$HOME/.claude/local/claude"
+alias claude="~/.claude/local/claude"
 

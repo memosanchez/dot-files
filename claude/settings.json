@@ -9,7 +9,21 @@
       "Bash(pnpm run lint)",
       "Bash(pnpm run test)",
       "Bash(pnpm run build)",
-      "Bash(pnpm run typecheck)"
+      "Bash(pnpm run typecheck)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr status:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue status:*)",
+      "Bash(gh repo list:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh run watch:*)",
+      "Bash(gh run download:*)"
     ],
     "deny": []
   },

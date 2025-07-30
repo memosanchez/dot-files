@@ -9,5 +9,6 @@
 
 # Workflow
 
-- Be sure to lint when you’re done making a series of code changes
-- Be sure to typecheck when you’re done making a series of code changes
+- Be sure to lint and type check when you’re done making a series of code changes
+- When presented with a Github link, use the github CLI to appropriately interact with it.
+- When creating context files, prefix the filename with `CC-` and use kebab-case for the filename.

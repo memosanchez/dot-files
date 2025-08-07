@@ -47,9 +47,13 @@ ensure_plugin() {
 [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]] && \
   ensure_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting"
 
+## Configure NVM plugin to auto-use .nvmrc
+export NVM_AUTOLOAD=1
+
 ## Load Oh My Zsh plugins
 plugins=(
   git
+  nvm
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
@@ -68,11 +72,6 @@ autoload -U promptinit; promptinit
 prompt pure
 
 # Development Tools
-## Node Version Manager
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-
 ## pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
 ### Only add if directory exists and not already in PATH

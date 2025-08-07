@@ -31,6 +31,11 @@ ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 ## Auto-update behavior
 zstyle ':omz:update' mode auto
 
+## NVM plugin configuration
+zstyle ':omz:plugins:nvm' lazy yes           # Defer nvm loading for faster startup
+zstyle ':omz:plugins:nvm' autoload yes       # Auto-use .nvmrc files
+zstyle ':omz:plugins:nvm' silent-autoload yes # Suppress version switch output
+
 ## Helper function to auto-install Oh My Zsh plugins
 ensure_plugin() {
   local plugin_name="$1"
@@ -50,6 +55,7 @@ ensure_plugin() {
 ## Load Oh My Zsh plugins
 plugins=(
   git
+  nvm
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
@@ -68,11 +74,6 @@ autoload -U promptinit; promptinit
 prompt pure
 
 # Development Tools
-## Node Version Manager
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-
 ## pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
 ### Only add if directory exists and not already in PATH

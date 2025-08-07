@@ -31,6 +31,11 @@ ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 ## Auto-update behavior
 zstyle ':omz:update' mode auto
 
+## NVM plugin configuration
+zstyle ':omz:plugins:nvm' lazy yes           # Defer nvm loading for faster startup
+zstyle ':omz:plugins:nvm' autoload yes       # Auto-use .nvmrc files
+zstyle ':omz:plugins:nvm' silent-autoload yes # Suppress version switch output
+
 ## Helper function to auto-install Oh My Zsh plugins
 ensure_plugin() {
   local plugin_name="$1"
@@ -46,9 +51,6 @@ ensure_plugin() {
   ensure_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions"
 [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]] && \
   ensure_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting"
-
-## Configure NVM plugin to auto-use .nvmrc
-export NVM_AUTOLOAD=1
 
 ## Load Oh My Zsh plugins
 plugins=(

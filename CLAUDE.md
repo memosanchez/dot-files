@@ -28,12 +28,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `claude/` - Claude Code configuration files (see claude/README.md for details)
   - `CLAUDE.md` - User's private global instructions for all projects (copied to ~/.claude/CLAUDE.md)
   - `settings.json` - User-level Claude Code settings with permissions and statusLine (copied to ~/.claude/settings.json)
-  - `settings.local.json.example` - Template for project-specific settings overrides
   - `README.md` - Documentation for Claude Code configuration
-  - `commands/` - Custom slash commands
-    - `review.md` - Code review command (/review)
-    - `test-plan.md` - Test plan generation command (/test-plan)
-    - `commit-template.md` - Commit message template command (/commit-template)
+  - `commands/` - Custom slash commands directory (empty, add your own)
 
 ### Scripts
 - `setup.sh` - Installation script with safety features and error handling

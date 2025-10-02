@@ -50,26 +50,28 @@ The `env` object can be used to set environment variables for Claude Code sessio
 #### Co-authorship
 `includeCoAuthoredBy` is set to `false` by default. Set to `true` to include Claude as a co-author in git commits.
 
-### `settings.local.json.example`
-Template for project-specific settings. To use:
+### Project-Specific Settings
+You can create `.claude/settings.local.json` in any project directory to override global settings:
 
-1. Copy to `.claude/settings.local.json` in any project directory
-2. Customize permissions and environment variables for that project
-3. Settings are merged with global settings (project settings take precedence)
+```json
+{
+  "env": {"PROJECT_VAR": "value"},
+  "permissions": {
+    "allow": ["Bash(make:*)"]
+  }
+}
+```
 
-**Note:** `settings.local.json` files should generally be gitignored to avoid committing local development preferences.
+Settings are merged with global settings (project settings take precedence). Add to `.gitignore` to avoid committing local preferences.
 
 ## Directory Structure
 
 ```
 claude/
-├── README.md                      # This file
-├── CLAUDE.md                      # Global instructions for Claude Code
-├── settings.json                  # Global user settings
-├── settings.local.json.example    # Template for project-specific settings
-└── commands/                      # Custom slash commands (optional)
-    ├── review.md                  # Example: /review command
-    └── test-plan.md               # Example: /test-plan command
+├── README.md         # This file
+├── CLAUDE.md         # Global instructions for Claude Code
+├── settings.json     # Global user settings
+└── commands/         # Custom slash commands (add your own)
 ```
 
 ## Usage
@@ -100,19 +102,18 @@ Edit `settings.json` and add to the `allow` or `deny` arrays:
 ```
 
 #### Creating Project-Specific Settings
-1. Copy `settings.local.json.example` to your project's `.claude/` directory
-2. Rename to `settings.local.json`
-3. Customize as needed
-4. Add to `.gitignore` if desired
+1. Create `.claude/settings.local.json` in your project directory
+2. Add your custom settings (permissions, env vars, etc.)
+3. Add to `.gitignore` to keep it local
 
 #### Custom Slash Commands
-Create markdown files in `claude/commands/`:
+Create markdown files in `claude/commands/` to add custom commands:
 ```bash
 mkdir -p claude/commands
-echo "Review this code for potential bugs and improvements" > claude/commands/review.md
+echo "Your custom command prompt here" > claude/commands/my-command.md
 ```
 
-Then use with `/review` in Claude Code sessions.
+Then use with `/my-command` in Claude Code sessions.
 
 ## Best Practices
 

@@ -1,0 +1,15 @@
+{
+  "env": {
+    "CUSTOM_VAR": "value"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(diff:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Read(//Users/memo/.claude/**)"
+    ],
+    "deny": []
+  }
+}

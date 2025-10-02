@@ -8,9 +8,10 @@
 
 ## Markdown
 - Files should be well-structured with clear headings and subheadings
-- Include date and time created and last modified in a metadata section
+- Markdown files (*.md) should include a metadata section at the top with creation date and last modified date
 - Use proper formatting: **bold** for emphasis, `code` for inline code, code blocks with language specification
 - Keep line length reasonable (80-100 chars) for readability in diffs
+- Do NOT add date metadata to code files (TypeScript, JavaScript, Python, etc.) - only to Markdown documentation
 
 ## TypeScript
 - Avoid the use of `any` type - use `unknown` or proper types instead

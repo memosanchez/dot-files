@@ -3,3 +3,6 @@
 
 # Claude Code - ignore top-level .claude directory
 .claude/settings.local.json
+
+# Claude Code commands directory - don't track synced commands
+claude/commands/.synced

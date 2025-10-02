@@ -25,9 +25,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `git/` - Git configuration files
   - `.gitconfig` - Global git configuration
   - `.gitignore` - Global gitignore rules
-- `claude/` - Claude Code configuration files
-  - `settings.json` - User-level Claude Code settings (copied to ~/.claude/settings.json)
+- `claude/` - Claude Code configuration files (see claude/README.md for details)
   - `CLAUDE.md` - User's private global instructions for all projects (copied to ~/.claude/CLAUDE.md)
+  - `settings.json` - User-level Claude Code settings with permissions and statusLine (copied to ~/.claude/settings.json)
+  - `README.md` - Documentation for Claude Code configuration
+  - `commands/` - Custom slash commands directory (empty, add your own)
 
 ### Scripts
 - `setup.sh` - Installation script with safety features and error handling

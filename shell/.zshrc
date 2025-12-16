@@ -32,9 +32,13 @@ ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 zstyle ':omz:update' mode auto
 
 ## NVM plugin configuration
-zstyle ':omz:plugins:nvm' lazy yes           # Defer nvm loading for faster startup
-zstyle ':omz:plugins:nvm' autoload yes       # Auto-use .nvmrc files
-zstyle ':omz:plugins:nvm' silent-autoload yes # Suppress version switch output
+## Only use lazy loading in interactive shells - it has bugs in non-interactive contexts
+## (e.g., Claude Code shell commands fail with "_omz_nvm_setup_completion not found")
+if [[ -o interactive ]]; then
+  zstyle ':omz:plugins:nvm' lazy yes           # Defer nvm loading for faster startup
+fi
+zstyle ':omz:plugins:nvm' autoload yes         # Auto-use .nvmrc files
+zstyle ':omz:plugins:nvm' silent-autoload yes  # Suppress version switch output
 
 ## Helper function to auto-install Oh My Zsh plugins
 ensure_plugin() {

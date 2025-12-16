@@ -17,9 +17,9 @@ If any of these fail (uncommitted changes, branch differs from remote, or no PR 
 3. Check for Linear ticket references (e.g., `ENG-123`, `PROJ-456`) in branch name, PR title, or commit messages
 4. Analyze the changes and write a changelog following the common-changelog style guide:
 
-### Common-Changelog Style Rules
+### Style Rules
 
-- **Imperative mood**: Use present-tense verbs like "Add", "Fix", "Refactor", "Bump", "Document", "Deprecate" (NOT past tense)
+- **Imperative mood**: Write a change using the imperative mood. It must start with a present-tense verb, for example (but not limited to) Add, Refactor, Bump, Document, Fix, Deprecate.
 - **Self-describing**: Each entry must be understandable without reading the category heading
 - **Categories** (use only those that apply, in this order):
   - Changed - modifications to existing functionality
@@ -34,14 +34,34 @@ If any of these fail (uncommitted changes, branch differs from remote, or no PR 
 - **Exclude**: Dotfile changes, dev-only dependency updates, minor code style changes, documentation formatting only
 - **Include**: Refactorings (potential side effects), runtime environment changes, new features, new documentation
 
+The word functionality here can also mean documentation, supported runtime environments and so forth. The categories exist to easily recognize the impact of changes and to allow skimming a changelog. Changes that are listed under Removed will typically be breaking, while anything under Added is potentially interesting to the reader but carries no risk when upgrading.
+
+Each change must be self-describing, as if no category heading exists. Instead of:
+
+```
+- Support of CentOS
+- `write()` method
+- Documentation for the `read()` method
+```
+
+Write:
+
+```
+- Support CentOS
+- Add `write()` method
+- Document the `read()` method
+```
+
 ### Format
 
 ```markdown
 ### Added
+
 - Add feature X ([ENG-123](https://linear.app/team/issue/ENG-123))
 - Add feature Y
 
 ### Fixed
+
 - Fix bug in Z
 ```
 

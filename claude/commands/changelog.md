@@ -27,7 +27,7 @@ If any of these fail (uncommitted changes, branch differs from remote, or no PR 
   - Removed - deleted functionality
   - Fixed - bug fixes
 - **Breaking changes**: Prefix with `**Breaking:**` and list first within each category
-- **References**: Include PR number in parentheses, e.g., `Add user authentication (#123)`. If the project uses Linear and there's a ticket reference in commits or branch name (e.g., `ENG-123`), include it as a link: `Add user authentication ([ENG-123](https://linear.app/team/issue/ENG-123)) (#123)`
+- **References**: Do NOT self-link to the current PR (it's redundant). If the project uses Linear and there's a ticket reference in commits or branch name (e.g., `ENG-123`), include it as a link: `Add user authentication ([ENG-123](https://linear.app/team/issue/ENG-123))`
 - **Single line per change**: Keep entries scannable, move details to commit messages
 - **Merge related commits**: Combine multiple commits addressing one feature into a single entry
 - **Skip no-ops**: Exclude commits that negate each other
@@ -37,14 +37,12 @@ If any of these fail (uncommitted changes, branch differs from remote, or no PR 
 ### Format
 
 ```markdown
-## Changelog
-
 ### Added
-- Add feature X ([ENG-123](https://linear.app/team/issue/ENG-123)) (#456)
-- Add feature Y (#457)
+- Add feature X ([ENG-123](https://linear.app/team/issue/ENG-123))
+- Add feature Y
 
 ### Fixed
-- Fix bug in Z (#458)
+- Fix bug in Z
 ```
 
 ## Update PR

@@ -1,14 +1,14 @@
 [user]
   name = Guillermo A. Sanchez
   email = memo.sanchez@gmail.com
-  
+
 [github]
   user = memosanchez
 
 [core]
   # Global gitignore file location
   excludesfile = ~/.gitignore
-  
+
   # Use cat as pager for simple output
   pager = cat
 
@@ -18,22 +18,25 @@
   c = commit
   co = checkout
   st = status -s # Short status with branch information
-  
+
   # Pretty log format with colors and concise information - reverse order (newest at bottom)
   lg = log --format='%Cred%h%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset%C(yellow)%d%Creset' --no-merges --reverse
-  
+
   # Unstage files - safer than using reset directly
   unstage = reset HEAD --
-  
+
   # Show the last commit details
   last = log -1 HEAD
-    
+
   # Show a compact log with graph (last 100 commits only)
   graph = log -n 100 --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-  
+
   # Uncommit - Reset the last commit while keeping changes staged
   uncommit = reset --soft HEAD~1
-  
+
+  # Delete local branches whose remotes are gone (after PR merge)
+  gone = !git fetch -p && git branch -vv | grep \": gone]\" | awk '{print $1}' | xargs -r git branch -D
+
 [color]
   # Enable color in Git output when possible
   ui = auto
@@ -46,7 +49,7 @@
 [push]
   # Push only the current branch to the upstream branch
   default = simple
-  
+
   # Automatically set up the remote branch when pushing
   # Eliminates the need for --set-upstream
   autoSetupRemote = true
@@ -64,11 +67,11 @@
   # Automatically prune deleted remote branches when fetching
   # Keeps your remote tracking branches clean
   prune = true
-  
+
   # Also prune tags that no longer exist on the remote
   # Keeps your tags in sync with remote repository
   pruneTags = true
-  
+
   # Fetch from all remotes when running git fetch
   # Ensures you have the latest state from all remotes
   all = true
@@ -77,11 +80,11 @@
   # Automatically handle commits with fixup! or squash!
   # Makes interactive rebases more powerful
   # autoSquash = true
-  
+
   # Automatically stash and unstash changes when rebasing
   # Prevents errors when rebasing with uncommitted changes
   autoStash = true
-  
+
   # Update refs that would be pushed during interactive rebase
   updateRefs = true
 
@@ -89,15 +92,15 @@
   # Use histogram algorithm for better diffs
   # An improved version of patience algorithm that's faster and handles some edge cases better
   algorithm = histogram
-  
+
   # Highlight moved code blocks in diffs with plain style
   # Makes it easier to see code that was relocated rather than changed
   colorMoved = plain
-  
+
   # Use a/b/c instead of old/new in diff output
   # Makes it easier to remember which side is which
   mnemonicPrefix = true
-  
+
   # Detect renamed files in diffs
   # Shows files as renamed rather than as deleted and added
   renames = true
@@ -136,7 +139,7 @@
   # Reuse recorded resolution of conflicted merges
   # Remembers how you resolved conflicts so you don't have to resolve them again
   enabled = true
-  
+
   # Automatically stage files that were resolved using recorded resolution
   # Saves you from having to manually add resolved files
   autoupdate = true

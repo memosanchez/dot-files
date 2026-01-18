@@ -11,8 +11,7 @@
 
 - Files should be well-structured with clear headings and subheadings
 - Use proper formatting: **bold** for emphasis, `code` for inline code, code blocks with language specification
-- Keep line length reasonable (80-100 chars) for readability in diffs
-- Do NOT add date metadata to code files (TypeScript, JavaScript, Python, etc.) - only to Markdown documentation
+- Keep line length reasonable (80-120 chars) for readability in diffs
 
 ## TypeScript
 

@@ -65,7 +65,7 @@ plugins=(
 )
 
 ## Initialize Oh My Zsh
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
 
 # Completions
 ## Homebrew completions (must be after Oh My Zsh to avoid double compinit)
@@ -73,7 +73,7 @@ if [[ -n "$HOMEBREW_PREFIX" ]] && [[ -d "$HOMEBREW_PREFIX/share/zsh/site-functio
   FPATH="$HOMEBREW_PREFIX/share/zsh/site-functions:${FPATH}"
 fi
 
-# Prompt 
+# Prompt
 autoload -U promptinit; promptinit
 prompt pure
 
@@ -88,10 +88,19 @@ if [ -d "$PNPM_HOME" ]; then
   esac
 fi
 
-## PostgreSQL tools
-[ -d "/opt/homebrew/opt/libpq/bin" ] && export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+## User local bin
+if [ -d "$HOME/.local/bin" ]; then
+  case ":$PATH:" in
+    *":$HOME/.local/bin:"*) ;;
+    *) export PATH="$HOME/.local/bin:$PATH" ;;
+  esac
+fi
 
-# Aliases
-## Claude Code CLI
-alias claude="~/.claude/local/claude"
+## PostgreSQL tools
+if [ -d "/opt/homebrew/opt/libpq/bin" ]; then
+  case ":$PATH:" in
+    *":/opt/homebrew/opt/libpq/bin:"*) ;;
+    *) export PATH="/opt/homebrew/opt/libpq/bin:$PATH" ;;
+  esac
+fi
 

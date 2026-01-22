@@ -14,6 +14,9 @@ export PATH="/usr/local/bin:$PATH"
 ## Add user bin directory to path
 export PATH="$HOME/bin:$PATH"
 
+## Add user local bin directory to path
+export PATH="$HOME/.local/bin:$PATH"
+
 ## Check window size after each command and update if necessary
 shopt -s checkwinsize
 

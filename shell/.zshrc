@@ -65,7 +65,7 @@ plugins=(
 )
 
 ## Initialize Oh My Zsh
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
 
 # Completions
 ## Homebrew completions (must be after Oh My Zsh to avoid double compinit)
@@ -97,5 +97,10 @@ if [ -d "$HOME/.local/bin" ]; then
 fi
 
 ## PostgreSQL tools
-[ -d "/opt/homebrew/opt/libpq/bin" ] && export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+if [ -d "/opt/homebrew/opt/libpq/bin" ]; then
+  case ":$PATH:" in
+    *":/opt/homebrew/opt/libpq/bin:"*) ;;
+    *) export PATH="/opt/homebrew/opt/libpq/bin:$PATH" ;;
+  esac
+fi
 

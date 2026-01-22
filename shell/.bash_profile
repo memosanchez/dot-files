@@ -17,9 +17,6 @@ export PATH="$HOME/bin:$PATH"
 ## Add user local bin directory to path
 export PATH="$HOME/.local/bin:$PATH"
 
-## Check window size after each command and update if necessary
-shopt -s checkwinsize
-
 ## Colorized Output
 export CLICOLOR=1
 
@@ -31,11 +28,11 @@ export HISTSIZE=500000
 export HISTCONTROL="erasedups:ignoreboth"
 export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
 
-## Git bash completion
-## Requres bash completion in
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-    . $(brew --prefix)/etc/bash_completion
+## Git/bash completion (requires: brew install bash-completion@2)
+if command -v brew &>/dev/null; then
+  BREW_PREFIX="$(brew --prefix)"
+  if [[ -r "${BREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+    source "${BREW_PREFIX}/etc/profile.d/bash_completion.sh"
+  fi
 fi
 
-## Personal Aliases
-alias virtualenv3='~/Library/Python/3.5/bin/virtualenv'

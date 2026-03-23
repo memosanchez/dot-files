@@ -38,6 +38,31 @@ if [ -d "$script_directory" ]; then
   git pull origin main --quiet || { echo "❌ Git pull failed. Are you connected to the internet?"; exit 1; }
 fi
 
+# Install Homebrew and packages
+## Check if Homebrew is installed, install if missing
+if ! command -v brew &>/dev/null; then
+  echo "🍺 Homebrew not found. Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || {
+    echo "❌ Homebrew installation failed. Check your internet connection and try again."
+    exit 1
+  }
+  # Make brew available in the current shell session
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+  echo "✅ Homebrew installed successfully."
+fi
+
+## Install packages from Brewfile
+if command -v brew &>/dev/null; then
+  echo "🍺 Installing Homebrew packages from Brewfile..."
+  brew bundle --file="${script_directory}/Brewfile" --no-lock || {
+    echo "❌ Homebrew package installation failed. Try running 'brew doctor' for diagnostics."
+    exit 1
+  }
+else
+  echo "⚠️  Homebrew is not available. Skipping package installation."
+  echo "   Install manually: https://brew.sh"
+fi
+
 echo "🐚 Copying shell configuration files to home directory..."
 rsync -avq --no-perms --backup --backup-dir="$backup_directory/shell" shell/ "$HOME" || { echo "❌ Shell configuration sync failed. Check permissions?"; exit 1; }
 # rsync: Remote sync tool for copying files

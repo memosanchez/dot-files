@@ -88,6 +88,15 @@ if [ -d "$PNPM_HOME" ]; then
   esac
 fi
 
+## asdf version manager
+ASDF_SHIMS="${ASDF_DATA_DIR:-$HOME/.asdf}/shims"
+if [ -d "$ASDF_SHIMS" ]; then
+  case ":$PATH:" in
+    *":$ASDF_SHIMS:"*) ;;
+    *) export PATH="$ASDF_SHIMS:$PATH" ;;
+  esac
+fi
+
 ## User local bin
 if [ -d "$HOME/.local/bin" ]; then
   case ":$PATH:" in

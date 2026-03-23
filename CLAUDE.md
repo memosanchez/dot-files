@@ -5,6 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 - `./setup.sh` - Main setup script that syncs configurations to your home directory
+  - Installs Homebrew if not present
+  - Installs packages from Brewfile via `brew bundle`
   - Performs git pull to fetch latest changes
   - Copies shell/, git/, and claude/ directories to $HOME using rsync
   - Returns to original directory after completion
@@ -31,6 +33,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `README.md` - Documentation for Claude Code configuration
   - `commands/` - Custom slash commands directory (empty, add your own)
 
+### Top-Level Files
+- `Brewfile` - Homebrew package manifest (not synced to $HOME, used by setup.sh)
+
 ### Scripts
 - `setup.sh` - Installation script with safety features and error handling
   - Uses `set -euo pipefail` for robust execution
@@ -44,6 +49,7 @@ This is a dotfiles management repository that:
 2. Uses rsync for efficient, permission-preserving file synchronization
 3. Implements defensive scripting practices to prevent common errors
 4. Provides clear feedback during installation process
+5. Manages Homebrew package dependencies via Brewfile
 
 The setup process is idempotent - running it multiple times is safe and will update configurations to the latest version.
 

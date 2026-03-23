@@ -6,3 +6,6 @@
 
 # Claude Code commands directory - don't track synced commands
 claude/commands/.synced
+
+# Homebrew
+Brewfile.lock.json

@@ -54,7 +54,7 @@ fi
 ## Install packages from Brewfile
 if command -v brew &>/dev/null; then
   echo "🍺 Installing Homebrew packages from Brewfile..."
-  brew bundle --file="${script_directory}/Brewfile" --no-lock || {
+  brew bundle --file="${script_directory}/Brewfile" || {
     echo "❌ Homebrew package installation failed. Try running 'brew doctor' for diagnostics."
     exit 1
   }

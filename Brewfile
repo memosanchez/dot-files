@@ -31,6 +31,10 @@ brew "zsh-autosuggestions"
 # Referenced in: shell/.zshrc (sourced from Homebrew)
 brew "zsh-syntax-highlighting"
 
+# Lightweight JSON processor
+# Referenced in: claude/settings.json (statusLine command)
+brew "jq"
+
 # Fast regex-based code search tool
 brew "ripgrep"
 

@@ -138,6 +138,17 @@
   # Helps you write better commit messages by seeing what you're committing
   verbose = true
 
+  # Sign all commits with SSH key for GitHub "Verified" badge
+  gpgsign = true
+
+[gpg]
+  # Use SSH keys for signing (simpler than GPG, reuses existing keys)
+  format = ssh
+
+[tag]
+  # Sign all tags with SSH key
+  gpgsign = true
+
 [rerere]
   # Reuse recorded resolution of conflicted merges
   # Remembers how you resolved conflicts so you don't have to resolve them again
@@ -146,3 +157,8 @@
   # Automatically stage files that were resolved using recorded resolution
   # Saves you from having to manually add resolved files
   autoupdate = true
+
+[include]
+  # Machine-specific overrides (email, signing key, etc.)
+  # Create ~/.gitconfig.local on each machine — not tracked in dotfiles
+  path = ~/.gitconfig.local

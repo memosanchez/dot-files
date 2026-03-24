@@ -3,7 +3,7 @@
 This directory contains Claude Code configuration files that are synced to `~/.claude/` by the `setup.sh` script.
 
 **Created:** 2025-10-01
-**Last Modified:** 2025-10-01
+**Last Modified:** 2026-03-24
 
 ## Files
 
@@ -22,33 +22,47 @@ This file is copied to `~/.claude/CLAUDE.md` and applies to all Claude Code sess
 ### `settings.json`
 Global user-level settings for Claude Code. Includes:
 
+#### Effort Level
+`effortLevel` is set to `"max"` for deepest reasoning on Opus 4.6. Other values: `"low"`, `"medium"`, `"high"`, `"auto"`.
+
 #### Permissions
 - **allow**: Commands that Claude can execute without asking for approval
   - Package manager commands (npm, pnpm, yarn lint/test/build/typecheck)
-  - GitHub CLI commands (pr, issue, repo, run operations)
-  - Read-only git commands (status, log, diff, show, branch, remote)
-  - Common shell utilities (find, ls, diff, grep, cat, head, tail, wc, which)
+  - GitHub CLI read commands (pr, issue, repo, run operations)
+  - Read-only git commands (status, log, diff, show, branch, remote, tag -l, stash list)
+  - Read-only Homebrew commands (list, info, search, config, doctor)
+  - Shell utilities (ls, diff, wc, which, jq)
   - Version checks (python, node, npm)
   - Docker read operations (ps, images, logs)
   - WebFetch for documentation sites (anthropic, github, stackoverflow, MDN)
 
 - **deny**: Dangerous commands that are explicitly blocked
   - Destructive file operations (`rm -rf`, `dd`, `mkfs`)
+  - All `sudo` commands
   - Force git operations (`push --force`, `reset --hard`)
+  - Destructive git operations (`checkout --`, `clean`)
   - Dangerous permission changes (`chmod -R 777`)
+  - Sensitive file reads (`.env`, `.pem`, `.key`, secrets, credentials, `.aws`, `.ssh`)
+
+#### Hooks
+- **SessionStart (compact)**: Re-injects key reminders after auto-compaction to prevent Claude from forgetting preferences in long conversations
+
+#### Plugins
+Enabled plugins from the official marketplace:
+- **GitHub** — PR reviews, issue management, repo operations (requires `GITHUB_PERSONAL_ACCESS_TOKEN`)
+- **Linear** — issue tracking, project management (uses OAuth)
+- **Playwright** — browser automation, testing, screenshots
 
 #### Status Line
-Custom status line configuration that displays the current model (Sonnet/Opus/Haiku) with color coding:
-- Sonnet: Cyan (color 96)
-- Opus: Magenta (color 95)
-- Haiku: Green (color 92)
-- Unknown: White (color 97)
+Custom status line displaying model name and context window usage:
+- Model name with color coding: Sonnet (cyan), Opus (magenta), Haiku (green)
+- Context window usage percentage with color coding: green (< 60%), yellow (60-79%), red (80%+)
 
 #### Environment Variables
 The `env` object can be used to set environment variables for Claude Code sessions.
 
 #### Co-authorship
-`includeCoAuthoredBy` is set to `false` by default. Set to `true` to include Claude as a co-author in git commits.
+`attribution.commit` and `attribution.pr` control commit/PR attribution templates.
 
 ### Project-Specific Settings
 You can create `.claude/settings.local.json` in any project directory to override global settings:

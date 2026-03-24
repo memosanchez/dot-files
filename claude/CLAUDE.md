@@ -59,7 +59,7 @@
 
 - Use descriptive titles following commit message format
 - Include "## Summary" section with bullet points of changes
-- Include "## Test Plan" section with testing steps
+- Include "## Test Plan" section with **manual** testing steps only — do not list things already covered by CI or pre-commit hooks (e.g., linting, type checking, tests passing). Focus on what a reviewer should manually verify.
 - Include "## Breaking Changes" section if applicable
 - Link related issues and PRs
 - Keep PRs focused - one feature or fix per PR
@@ -159,7 +159,12 @@
 ## Tools & Commands
 
 - Use GitHub CLI for PR/issue operations when available
-- Prefer specialized tools (Read, Edit, Write) over bash commands for file operations
+- NEVER use grep, awk, sed, cat, head, or tail via Bash — use the built-in tools instead:
+  - **Grep** (powered by ripgrep) for all code/content search — never shell out to grep or rg
+  - **Read** for reading files — never use cat, head, or tail
+  - **Edit** for modifying files — never use sed or awk
+  - **Write** for creating files — never use cat heredoc or echo redirection
+- Only use Bash for system commands that have no built-in tool equivalent
 - Run common checks automatically: lint, test, type-check, build
 
 # Security

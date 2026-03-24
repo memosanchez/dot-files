@@ -40,32 +40,23 @@ fi
 zstyle ':omz:plugins:nvm' autoload yes         # Auto-use .nvmrc files
 zstyle ':omz:plugins:nvm' silent-autoload yes  # Suppress version switch output
 
-## Helper function to auto-install Oh My Zsh plugins
-ensure_plugin() {
-  local plugin_name="$1"
-  local plugin_repo="$2"
-  if [[ ! -d "$ZSH_CUSTOM/plugins/$plugin_name" ]]; then
-    echo "Installing $plugin_name..."
-    git clone "$plugin_repo" "$ZSH_CUSTOM/plugins/$plugin_name" --quiet
-  fi
-}
-
-## Install plugins if not present (fast directory check)
-[[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]] && \
-  ensure_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions"
-[[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]] && \
-  ensure_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting"
-
 ## Load Oh My Zsh plugins
 plugins=(
   git
   nvm
-  zsh-autosuggestions
-  zsh-syntax-highlighting
 )
 
 ## Initialize Oh My Zsh
 source "$ZSH/oh-my-zsh.sh"
+
+## ZSH plugins (installed via Homebrew, managed in Brewfile)
+## Syntax highlighting must be sourced last per its documentation
+if [[ -n "$HOMEBREW_PREFIX" ]]; then
+  [[ -f "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+    source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  [[ -f "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
+    source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
 
 # Completions
 ## Homebrew completions (must be after Oh My Zsh to avoid double compinit)

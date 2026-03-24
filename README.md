@@ -23,9 +23,22 @@ The `setup.sh` script handles the installation process:
 - `git/` - Git configuration files
 - `claude/` - Claude Code configuration files
 
-## 🔑 Per-Machine Git Configuration
+## 🔑 Per-Machine Configuration
 
-The shared `.gitconfig` enables SSH commit signing and includes `~/.gitconfig.local` for machine-specific overrides. This file is **not tracked** in the repo — create it on each machine.
+Both `.gitconfig` and `.zshrc` support machine-specific overrides via local files that are **not tracked** in the repo. Create these on each machine as needed.
+
+### Shell Overrides (`~/.zshrc.local`)
+
+For machine-specific environment variables, aliases, or tool configuration:
+
+```bash
+# ~/.zshrc.local (example: use 1Password SSH agent)
+export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+```
+
+### Git Overrides (`~/.gitconfig.local`)
+
+The shared `.gitconfig` enables SSH commit signing and includes `~/.gitconfig.local` for machine-specific overrides.
 
 ### Signing Key (required per machine)
 

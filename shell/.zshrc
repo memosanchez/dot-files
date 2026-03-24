@@ -104,3 +104,6 @@ if [ -d "/opt/homebrew/opt/libpq/bin" ]; then
   esac
 fi
 
+# Machine-specific overrides (not tracked in dotfiles)
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+

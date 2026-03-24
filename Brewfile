@@ -19,3 +19,6 @@ brew "libpq"
 # Programmable completion for Bash 4.2+
 # Referenced in: shell/.bash_profile (bash_completion.sh)
 brew "bash-completion@2"
+
+# Monospaced font with programming ligatures
+cask "font-fira-code"

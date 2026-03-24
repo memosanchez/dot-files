@@ -102,11 +102,11 @@
       }
     ]
   },
-  "enabledPlugins": [
-    "github@claude-plugins-official",
-    "linear@claude-plugins-official",
-    "playwright@claude-plugins-official"
-  ],
+  "enabledPlugins": {
+    "github@claude-plugins-official": true,
+    "linear@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true
+  },
   "statusLine": {
     "type": "command",
     "command": "input=$(cat); IFS='|' read -r model ctx <<< \"$(jq -r '(.model.display_name // \"?\") + \"|\" + ((.context_window.used_percentage // \"\") | tostring)' <<< \"$input\")\"; case \"$model\" in *Sonnet*) mc=96;; *Opus*) mc=95;; *Haiku*) mc=92;; *) mc=97;; esac; ctx_str=\"\"; if [ -n \"$ctx\" ]; then ctx_int=${ctx%.*}; if [ \"$ctx_int\" -ge 80 ]; then cc=31; elif [ \"$ctx_int\" -ge 60 ]; then cc=33; else cc=32; fi; ctx_str=\" \\033[${cc}m${ctx_int}%\\033[0m\"; fi; printf \"\\033[${mc}m%s\\033[0m%b\" \"$model\" \"$ctx_str\""

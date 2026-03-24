@@ -37,6 +37,9 @@
   # Delete local branches whose remotes are gone (after PR merge)
   gone = !git fetch -p && git branch -vv | grep \": gone]\" | awk '{print $1}' | xargs -r git branch -D
 
+  # Pull with force-updated tags (use instead of `git pull` when tags are moved on remote)
+  p = !git fetch origin --force --prune --prune-tags '+refs/tags/*:refs/tags/*' && git merge @{upstream}
+
 [color]
   # Enable color in Git output when possible
   ui = auto

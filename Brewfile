@@ -5,6 +5,9 @@
 # Referenced in: shell/.zshrc (ASDF_SHIMS PATH)
 brew "asdf"
 
+# Polyglot dev tool manager (runtimes, env vars, task runner)
+brew "mise"
+
 # Pretty, minimal, and fast ZSH prompt
 # Referenced in: shell/.zshrc (prompt pure)
 brew "pure"

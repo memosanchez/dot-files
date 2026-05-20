@@ -3,7 +3,7 @@
 This directory contains Claude Code configuration files that are synced to `~/.claude/` by the `setup.sh` script.
 
 **Created:** 2025-10-01
-**Last Modified:** 2026-03-24
+**Last Modified:** 2026-05-20
 
 ## Files
 
@@ -23,15 +23,26 @@ This file is copied to `~/.claude/CLAUDE.md` and applies to all Claude Code sess
 Global user-level settings for Claude Code. Includes:
 
 #### Effort Level
-`effortLevel` is set to `"max"` for deepest reasoning on Opus 4.6. Other values: `"low"`, `"medium"`, `"high"`, `"auto"`.
+`effortLevel` is set to `"xhigh"` for deepest persistent reasoning. Valid values per the docs: `"low"`, `"medium"`, `"high"`, `"xhigh"`. The session-only `/effort max` command is *not* a valid settings value — it gets silently dropped if used in JSON. See https://code.claude.com/docs/en/settings.
+
+#### Auto Updates
+`autoUpdatesChannel` is set to `"stable"` to pin to the stable release channel (~1 week behind `"latest"`) for fewer surprise regressions. There is no documented `autoUpdates: false` toggle — `autoUpdatesChannel` is the only update control.
+
+#### MCP Servers
+`enableAllProjectMcpServers` is set to `false` explicitly. This blocks any project's `.mcp.json` from auto-activating MCP servers without manual approval. Pair with `enabledMcpjsonServers` / `disabledMcpjsonServers` arrays for fine-grained control.
 
 #### Permissions
+- **defaultMode**: `"acceptEdits"` — auto-accepts `Read`/`Write`/`Edit` tool calls without prompting. Bash and other risky tools still prompt. Valid values: `"default"`, `"acceptEdits"`, `"plan"`, `"auto"`, `"dontAsk"`, `"bypassPermissions"`.
+
+- **additionalDirectories**: `["~/.claude/"]` — lets Claude read your memory, plans, transcripts, and shell snapshots cross-session without per-prompt approval.
+
 - **allow**: Commands that Claude can execute without asking for approval
   - Package manager commands (npm, pnpm, yarn lint/test/build/typecheck)
-  - GitHub CLI read commands (pr, issue, repo, run operations)
-  - Read-only git commands (status, log, diff, show, branch, remote, tag -l, stash list)
+  - GitHub CLI read commands (pr, issue, repo, run operations, `gh api`)
+  - Read-only git commands (status, log, diff, show, branch, remote, tag -l, stash list, fetch, ls-files, rev-parse)
   - Read-only Homebrew commands (list, info, search, config, doctor)
-  - Shell utilities (ls, diff, wc, which, jq)
+  - Read-only `mise` commands (current, ls, which)
+  - Shell utilities (ls, diff, wc, which, jq, rg)
   - Version checks (python, node, npm)
   - Docker read operations (ps, images, logs)
   - WebFetch for documentation sites (anthropic, github, stackoverflow, MDN)
@@ -48,10 +59,22 @@ Global user-level settings for Claude Code. Includes:
 - **SessionStart (compact)**: Re-injects key reminders after auto-compaction to prevent Claude from forgetting preferences in long conversations
 
 #### Plugins
-Enabled plugins from the official marketplace:
-- **GitHub** — PR reviews, issue management, repo operations (requires `GITHUB_PERSONAL_ACCESS_TOKEN`)
-- **Linear** — issue tracking, project management (uses OAuth)
-- **Playwright** — browser automation, testing, screenshots
+All entries reference the `claude-plugins-official` marketplace.
+
+Enabled:
+- **context7** — fetch up-to-date library/framework documentation
+- **frontend-design** — production-grade frontend component generation
+- **linear** — Linear issue tracking and project management (OAuth)
+- **playwright** — browser automation, testing, screenshots
+- **typescript-lsp** — TypeScript language server integration
+- **feature-dev** — guided feature development with codebase understanding
+- **commit-commands** — git commit/push/PR helpers
+- **terraform** — Terraform registry lookups and HCP workspace tools
+- **elixir-ls-lsp** — Elixir language server integration
+
+Explicitly disabled (kept in file for documentation):
+- **vercel** — Vercel deploy / project management
+- **posthog** — PostHog analytics integration
 
 #### Status Line
 Custom status line displaying model name and context window usage:
@@ -62,7 +85,7 @@ Custom status line displaying model name and context window usage:
 The `env` object can be used to set environment variables for Claude Code sessions.
 
 #### Co-authorship
-`attribution.commit` and `attribution.pr` control commit/PR attribution templates.
+`attribution.commit` and `attribution.pr` control commit/PR attribution templates. Both are empty strings here to suppress the `Co-Authored-By: Claude` trailer in commits and PR descriptions. The older `includeCoAuthoredBy` boolean is deprecated in current docs — use `attribution` instead.
 
 ### Project-Specific Settings
 You can create `.claude/settings.local.json` in any project directory to override global settings:
@@ -78,6 +101,55 @@ You can create `.claude/settings.local.json` in any project directory to overrid
 
 Settings are merged with global settings (project settings take precedence). Add to `.gitignore` to avoid committing local preferences.
 
+### `skills/`
+User-authored skills, organized in the repo by category but **flattened on sync** to `~/.claude/skills/<skill>/SKILL.md`. Claude Code only discovers skills one level deep, so categories exist purely for repo organization — `setup.sh` strips the category folder when copying.
+
+Repo layout:
+```
+skills/
+├── general/
+│   └── branch-status/SKILL.md
+└── engineering/
+    └── pre-commit-check/SKILL.md
+```
+
+After `./setup.sh` runs:
+```
+~/.claude/skills/
+├── branch-status/SKILL.md
+└── pre-commit-check/SKILL.md
+```
+
+**Rules enforced by setup.sh:**
+- Every SKILL.md must live inside a category folder (no `skills/<skill>/SKILL.md` at the top level — setup will bail).
+- Skill names must be unique across categories (no two categories can both define `branch-status` — setup will bail).
+
+A skill is a packaged set of instructions Claude can invoke — automatically (when a request matches the skill's `description` frontmatter) or manually via `/<skill-name>` (unless `disable-model-invocation: true` is set). See https://code.claude.com/docs/en/skills for the full authoring guide.
+
+**Minimum SKILL.md shape:**
+```markdown
+---
+description: One-line summary Claude uses to decide when this skill applies. Be specific about triggers.
+---
+
+# my-skill
+
+Instructions for Claude go here as plain Markdown.
+```
+
+Skills currently in this repo:
+
+**general/**
+- `grill-me` — interview-style stress-test of a plan; walks the decision tree, recommends answers
+- `handoff` — write a handoff document so a fresh agent can pick up the current conversation
+
+**engineering/**
+- `pre-commit-check` — run lint/typecheck/test/build as a pre-commit gate (auto-detects package manager)
+- `grill-with-docs` — `grill-me` plus inline `CONTEXT.md` and ADR updates as decisions crystallize (includes `ADR-FORMAT.md` and `CONTEXT-FORMAT.md` supporting files)
+- `to-prd` — synthesize a PRD from current conversation and publish to Linear (`disable-model-invocation: true` — must invoke explicitly with `/to-prd`)
+
+To start a new skill, copy any of the above into the category folder that fits, then rename the directory and edit the frontmatter.
+
 ## Directory Structure
 
 ```
@@ -85,7 +157,18 @@ claude/
 ├── README.md         # This file
 ├── CLAUDE.md         # Global instructions for Claude Code
 ├── settings.json     # Global user settings
-└── commands/         # Custom slash commands (add your own)
+├── commands/         # Custom slash commands (add your own)
+└── skills/                       # User-authored skills, grouped by category
+    ├── general/
+    │   ├── grill-me/SKILL.md
+    │   └── handoff/SKILL.md
+    └── engineering/
+        ├── pre-commit-check/SKILL.md
+        ├── grill-with-docs/
+        │   ├── SKILL.md
+        │   ├── ADR-FORMAT.md
+        │   └── CONTEXT-FORMAT.md
+        └── to-prd/SKILL.md
 ```
 
 ## Usage

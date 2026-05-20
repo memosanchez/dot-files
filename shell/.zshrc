@@ -104,6 +104,18 @@ if [ -d "/opt/homebrew/opt/libpq/bin" ]; then
   esac
 fi
 
+## Google Cloud SDK (gcloud, bq, gsutil, etc.)
+if [ -d "/opt/homebrew/share/google-cloud-sdk/bin" ]; then
+  case ":$PATH:" in
+    *":/opt/homebrew/share/google-cloud-sdk/bin:"*) ;;
+    *) export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH" ;;
+  esac
+fi
+### gcloud shell completion
+if [ -f "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc" ]; then
+  source "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc"
+fi
+
 # Machine-specific overrides (not tracked in dotfiles)
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 

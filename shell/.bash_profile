@@ -17,6 +17,14 @@ export PATH="$HOME/bin:$PATH"
 ## Add user local bin directory to path
 export PATH="$HOME/.local/bin:$PATH"
 
+## Google Cloud SDK (gcloud, bq, gsutil, etc.)
+if [ -d "/opt/homebrew/share/google-cloud-sdk/bin" ]; then
+  export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH"
+fi
+if [ -f "/opt/homebrew/share/google-cloud-sdk/completion.bash.inc" ]; then
+  source "/opt/homebrew/share/google-cloud-sdk/completion.bash.inc"
+fi
+
 ## Colorized Output
 export CLICOLOR=1
 

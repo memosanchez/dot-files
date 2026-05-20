@@ -32,6 +32,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `settings.json` - User-level Claude Code settings with permissions and statusLine (copied to ~/.claude/settings.json)
   - `README.md` - Documentation for Claude Code configuration
   - `commands/` - Custom slash commands directory (empty, add your own)
+  - `skills/` - User-authored skills, grouped by category (e.g., `general/`, `engineering/`); setup.sh flattens to `~/.claude/skills/<skill>/SKILL.md` on sync
 
 ### Top-Level Files
 - `Brewfile` - Homebrew package manifest (not synced to $HOME, used by setup.sh)

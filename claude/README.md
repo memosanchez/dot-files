@@ -101,6 +101,48 @@ You can create `.claude/settings.local.json` in any project directory to overrid
 
 Settings are merged with global settings (project settings take precedence). Add to `.gitignore` to avoid committing local preferences.
 
+### `skills/`
+User-authored skills, organized in the repo by category but **flattened on sync** to `~/.claude/skills/<skill>/SKILL.md`. Claude Code only discovers skills one level deep, so categories exist purely for repo organization — `setup.sh` strips the category folder when copying.
+
+Repo layout:
+```
+skills/
+├── general/
+│   └── branch-status/SKILL.md
+└── engineering/
+    └── pre-commit-check/SKILL.md
+```
+
+After `./setup.sh` runs:
+```
+~/.claude/skills/
+├── branch-status/SKILL.md
+└── pre-commit-check/SKILL.md
+```
+
+**Rules enforced by setup.sh:**
+- Every SKILL.md must live inside a category folder (no `skills/<skill>/SKILL.md` at the top level — setup will bail).
+- Skill names must be unique across categories (no two categories can both define `branch-status` — setup will bail).
+
+A skill is a packaged set of instructions Claude can invoke — automatically (when a request matches the skill's `description` frontmatter) or manually via `/<skill-name>` (unless `disable-model-invocation: true` is set). See https://code.claude.com/docs/en/skills for the full authoring guide.
+
+**Minimum SKILL.md shape:**
+```markdown
+---
+description: One-line summary Claude uses to decide when this skill applies. Be specific about triggers.
+---
+
+# my-skill
+
+Instructions for Claude go here as plain Markdown.
+```
+
+Sample skills in this repo:
+- `skills/general/branch-status/SKILL.md` — summarizes the current git branch state
+- `skills/engineering/pre-commit-check/SKILL.md` — runs lint/typecheck/test/build as a pre-commit gate
+
+Copy either directory into a category folder to start a new skill. Pick the category that fits, then rename the skill folder.
+
 ## Directory Structure
 
 ```
@@ -108,7 +150,14 @@ claude/
 ├── README.md         # This file
 ├── CLAUDE.md         # Global instructions for Claude Code
 ├── settings.json     # Global user settings
-└── commands/         # Custom slash commands (add your own)
+├── commands/         # Custom slash commands (add your own)
+└── skills/           # User-authored skills, grouped by category
+    ├── general/
+    │   └── branch-status/
+    │       └── SKILL.md
+    └── engineering/
+        └── pre-commit-check/
+            └── SKILL.md
 ```
 
 ## Usage

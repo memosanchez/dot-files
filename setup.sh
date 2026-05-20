@@ -85,7 +85,42 @@ rsync -avq --no-perms --backup --backup-dir="$backup_directory/git" git/ "$HOME"
 
 echo "🤖 Setting up Claude configuration..."
 mkdir -p "$HOME/.claude" || { echo "❌ Failed to create .claude directory. Check permissions?"; exit 1; }
-rsync -avq --no-perms --backup --backup-dir="$backup_directory/claude" claude/ "$HOME/.claude" || { echo "❌ Claude configuration sync failed. Check permissions?"; exit 1; }
+
+# Sync everything except skills/ — skills are organized into category folders
+# in the repo (claude/skills/<category>/<skill>/SKILL.md) but Claude Code
+# expects them flat (~/.claude/skills/<skill>/SKILL.md), so they need a
+# separate flattening pass below.
+rsync -avq --no-perms --backup --backup-dir="$backup_directory/claude" \
+  --exclude='skills' \
+  claude/ "$HOME/.claude" || { echo "❌ Claude configuration sync failed. Check permissions?"; exit 1; }
+
+# Flatten skills: claude/skills/<category>/<skill>/ → ~/.claude/skills/<skill>/
+if [ -d "claude/skills" ]; then
+  # Bail if any SKILL.md is sitting flat (not inside a category folder)
+  loose_skills="$(find claude/skills -mindepth 2 -maxdepth 2 -name SKILL.md 2>/dev/null)"
+  if [ -n "$loose_skills" ]; then
+    echo "❌ Found SKILL.md files outside a category folder:"
+    echo "$loose_skills" | sed 's/^/   /'
+    echo "   Move each into claude/skills/<category>/<skill-name>/SKILL.md"
+    exit 1
+  fi
+
+  # Bail if two categories define the same skill name (would silently clobber)
+  duplicates="$(find claude/skills -mindepth 2 -maxdepth 2 -type d 2>/dev/null | xargs -n1 basename 2>/dev/null | sort | uniq -d)"
+  if [ -n "$duplicates" ]; then
+    echo "❌ Duplicate skill names across categories:"
+    echo "$duplicates" | sed 's/^/   - /'
+    echo "   Each skill name must be unique across all category folders."
+    exit 1
+  fi
+
+  mkdir -p "$HOME/.claude/skills"
+  for category_dir in claude/skills/*/; do
+    [ -d "$category_dir" ] || continue
+    rsync -avq --no-perms --backup --backup-dir="$backup_directory/claude/skills" \
+      "$category_dir" "$HOME/.claude/skills/" || { echo "❌ Skills sync failed. Check permissions?"; exit 1; }
+  done
+fi
 
 # Return to the original directory
 cd "$current_directory" || { echo "❌ Couldn't return to where you started."; exit 1; }

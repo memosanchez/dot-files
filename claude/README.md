@@ -3,7 +3,7 @@
 This directory contains Claude Code configuration files that are synced to `~/.claude/` by the `setup.sh` script.
 
 **Created:** 2025-10-01
-**Last Modified:** 2026-03-24
+**Last Modified:** 2026-05-20
 
 ## Files
 
@@ -23,15 +23,26 @@ This file is copied to `~/.claude/CLAUDE.md` and applies to all Claude Code sess
 Global user-level settings for Claude Code. Includes:
 
 #### Effort Level
-`effortLevel` is set to `"max"` for deepest reasoning on Opus 4.6. Other values: `"low"`, `"medium"`, `"high"`, `"auto"`.
+`effortLevel` is set to `"xhigh"` for deepest persistent reasoning. Valid values per the docs: `"low"`, `"medium"`, `"high"`, `"xhigh"`. The session-only `/effort max` command is *not* a valid settings value — it gets silently dropped if used in JSON. See https://code.claude.com/docs/en/settings.
+
+#### Auto Updates
+`autoUpdatesChannel` is set to `"stable"` to pin to the stable release channel (~1 week behind `"latest"`) for fewer surprise regressions. There is no documented `autoUpdates: false` toggle — `autoUpdatesChannel` is the only update control.
+
+#### MCP Servers
+`enableAllProjectMcpServers` is set to `false` explicitly. This blocks any project's `.mcp.json` from auto-activating MCP servers without manual approval. Pair with `enabledMcpjsonServers` / `disabledMcpjsonServers` arrays for fine-grained control.
 
 #### Permissions
+- **defaultMode**: `"acceptEdits"` — auto-accepts `Read`/`Write`/`Edit` tool calls without prompting. Bash and other risky tools still prompt. Valid values: `"default"`, `"acceptEdits"`, `"plan"`, `"auto"`, `"dontAsk"`, `"bypassPermissions"`.
+
+- **additionalDirectories**: `["~/.claude/"]` — lets Claude read your memory, plans, transcripts, and shell snapshots cross-session without per-prompt approval.
+
 - **allow**: Commands that Claude can execute without asking for approval
   - Package manager commands (npm, pnpm, yarn lint/test/build/typecheck)
-  - GitHub CLI read commands (pr, issue, repo, run operations)
-  - Read-only git commands (status, log, diff, show, branch, remote, tag -l, stash list)
+  - GitHub CLI read commands (pr, issue, repo, run operations, `gh api`)
+  - Read-only git commands (status, log, diff, show, branch, remote, tag -l, stash list, fetch, ls-files, rev-parse)
   - Read-only Homebrew commands (list, info, search, config, doctor)
-  - Shell utilities (ls, diff, wc, which, jq)
+  - Read-only `mise` commands (current, ls, which)
+  - Shell utilities (ls, diff, wc, which, jq, rg)
   - Version checks (python, node, npm)
   - Docker read operations (ps, images, logs)
   - WebFetch for documentation sites (anthropic, github, stackoverflow, MDN)
@@ -48,10 +59,22 @@ Global user-level settings for Claude Code. Includes:
 - **SessionStart (compact)**: Re-injects key reminders after auto-compaction to prevent Claude from forgetting preferences in long conversations
 
 #### Plugins
-Enabled plugins from the official marketplace:
-- **GitHub** — PR reviews, issue management, repo operations (requires `GITHUB_PERSONAL_ACCESS_TOKEN`)
-- **Linear** — issue tracking, project management (uses OAuth)
-- **Playwright** — browser automation, testing, screenshots
+All entries reference the `claude-plugins-official` marketplace.
+
+Enabled:
+- **context7** — fetch up-to-date library/framework documentation
+- **frontend-design** — production-grade frontend component generation
+- **linear** — Linear issue tracking and project management (OAuth)
+- **playwright** — browser automation, testing, screenshots
+- **typescript-lsp** — TypeScript language server integration
+- **feature-dev** — guided feature development with codebase understanding
+- **commit-commands** — git commit/push/PR helpers
+- **terraform** — Terraform registry lookups and HCP workspace tools
+- **elixir-ls-lsp** — Elixir language server integration
+
+Explicitly disabled (kept in file for documentation):
+- **vercel** — Vercel deploy / project management
+- **posthog** — PostHog analytics integration
 
 #### Status Line
 Custom status line displaying model name and context window usage:
@@ -62,7 +85,7 @@ Custom status line displaying model name and context window usage:
 The `env` object can be used to set environment variables for Claude Code sessions.
 
 #### Co-authorship
-`attribution.commit` and `attribution.pr` control commit/PR attribution templates.
+`attribution.commit` and `attribution.pr` control commit/PR attribution templates. Both are empty strings here to suppress the `Co-Authored-By: Claude` trailer in commits and PR descriptions. The older `includeCoAuthoredBy` boolean is deprecated in current docs — use `attribution` instead.
 
 ### Project-Specific Settings
 You can create `.claude/settings.local.json` in any project directory to override global settings:

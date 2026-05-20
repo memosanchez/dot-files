@@ -1,12 +1,18 @@
 {
   "env": {},
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "cleanupPeriodDays": 90,
+  "autoUpdatesChannel": "stable",
+  "enableAllProjectMcpServers": false,
   "attribution": {
     "commit": "",
     "pr": ""
   },
   "permissions": {
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": [
+      "~/.claude/"
+    ],
     "allow": [
       "Bash(npm run lint)",
       "Bash(npm run test)",
@@ -44,6 +50,14 @@
       "Bash(git remote:*)",
       "Bash(git tag -l:*)",
       "Bash(git stash list:*)",
+      "Bash(git fetch:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(gh api:*)",
+      "Bash(mise current)",
+      "Bash(mise ls)",
+      "Bash(mise which:*)",
+      "Bash(rg:*)",
       "Bash(brew list:*)",
       "Bash(brew info:*)",
       "Bash(brew search:*)",
@@ -106,7 +120,14 @@
     "context7@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
-    "playwright@claude-plugins-official": true
+    "playwright@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "terraform@claude-plugins-official": true,
+    "elixir-ls-lsp@claude-plugins-official": true,
+    "vercel@claude-plugins-official": false,
+    "posthog@claude-plugins-official": false
   },
   "statusLine": {
     "type": "command",

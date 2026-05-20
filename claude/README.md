@@ -137,11 +137,18 @@ description: One-line summary Claude uses to decide when this skill applies. Be 
 Instructions for Claude go here as plain Markdown.
 ```
 
-Sample skills in this repo:
-- `skills/general/branch-status/SKILL.md` — summarizes the current git branch state
-- `skills/engineering/pre-commit-check/SKILL.md` — runs lint/typecheck/test/build as a pre-commit gate
+Skills currently in this repo:
 
-Copy either directory into a category folder to start a new skill. Pick the category that fits, then rename the skill folder.
+**general/**
+- `grill-me` — interview-style stress-test of a plan; walks the decision tree, recommends answers
+- `handoff` — write a handoff document so a fresh agent can pick up the current conversation
+
+**engineering/**
+- `pre-commit-check` — run lint/typecheck/test/build as a pre-commit gate (auto-detects package manager)
+- `grill-with-docs` — `grill-me` plus inline `CONTEXT.md` and ADR updates as decisions crystallize (includes `ADR-FORMAT.md` and `CONTEXT-FORMAT.md` supporting files)
+- `to-prd` — synthesize a PRD from current conversation and publish to Linear (`disable-model-invocation: true` — must invoke explicitly with `/to-prd`)
+
+To start a new skill, copy any of the above into the category folder that fits, then rename the directory and edit the frontmatter.
 
 ## Directory Structure
 
@@ -151,13 +158,17 @@ claude/
 ├── CLAUDE.md         # Global instructions for Claude Code
 ├── settings.json     # Global user settings
 ├── commands/         # Custom slash commands (add your own)
-└── skills/           # User-authored skills, grouped by category
+└── skills/                       # User-authored skills, grouped by category
     ├── general/
-    │   └── branch-status/
-    │       └── SKILL.md
+    │   ├── grill-me/SKILL.md
+    │   └── handoff/SKILL.md
     └── engineering/
-        └── pre-commit-check/
-            └── SKILL.md
+        ├── pre-commit-check/SKILL.md
+        ├── grill-with-docs/
+        │   ├── SKILL.md
+        │   ├── ADR-FORMAT.md
+        │   └── CONTEXT-FORMAT.md
+        └── to-prd/SKILL.md
 ```
 
 ## Usage

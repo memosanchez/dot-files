@@ -13,6 +13,17 @@
 - Use proper formatting: **bold** for emphasis, `code` for inline code, code blocks with language specification
 - Keep line length reasonable (80-120 chars) for readability in diffs
 
+## Human-Facing Prose
+
+When writing prose that's meant to read as if a person wrote it — code-review comments, PR descriptions, sample copy, Slack/chat messages, example "voice" in skills:
+
+- Avoid semicolons and em dashes. They scream AI-speak.
+- Prefer two short sentences over one long one. Period over semicolon. Parentheses or a period over an em dash.
+- Use plain, everyday words. No "obviously", "just", "simply", or blame.
+- If unsure whether something is an issue, phrase it as a question. If sure, phrase it as a statement. Either way, speak with humility.
+
+This rule applies to prose meant to sound human. It does **not** apply to structural markdown (e.g. `**term** — definition` bullets), code, or technical reference docs where clarity beats naturalness.
+
 ## TypeScript
 
 - Avoid the use of `any` type - use `unknown` or proper types instead

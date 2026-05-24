@@ -9,3 +9,4 @@ node_modules
 TODO
 .claude/settings.local.json
 CC-*.md
+CONTEXT.md

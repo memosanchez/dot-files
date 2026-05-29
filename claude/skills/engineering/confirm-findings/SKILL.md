@@ -1,19 +1,19 @@
 ---
 name: confirm-findings
-description: Re-verify a prior review's findings by reading the actual file lines, grading each YES/NO with a reason, and producing a grouped, actionable report. Use after a code review or audit has produced a list of findings and you want them re-checked before acting on them.
+description: Verify a prior review's findings by reading the actual file lines, grading each YES/NO with a reason, and producing a grouped, actionable report. Use after a code review or audit has produced a list of findings and you want them re-checked before acting on them.
 disable-model-invocation: true
 allowed-tools: Read Grep Glob
 ---
 
 # confirm-findings
 
-Re-verify each finding from the prior review before it's acted on. Treat the prior pass as a hypothesis, not a fact.
+Verify each finding from the prior review before it's acted on. Treat the prior pass as a hypothesis, not a fact.
 
 ## Protocol
 
 1. **Read & confirm** — for every finding:
    - Open the file with the Read tool and read the cited lines directly. Don't trust memory or summaries from the prior turn.
-   - Cross-check relevant documentation if the finding references an API, library behavior, or convention.
+   - Check relevant documentation if the finding references an API, library behavior, or convention.
    - Follow the code path far enough to understand the actual impact.
 
 2. **Grade** — for each finding, state **YES** (confirmed) or **NO** (rejected) with one specific reason citing the file and lines you read. Check the finding against the rules in `CLAUDE.md` before grading.

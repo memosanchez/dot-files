@@ -125,9 +125,7 @@
     "feature-dev@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
     "terraform@claude-plugins-official": true,
-    "elixir-ls-lsp@claude-plugins-official": true,
-    "vercel@claude-plugins-official": false,
-    "posthog@claude-plugins-official": false
+    "vercel@claude-plugins-official": false
   },
   "statusLine": {
     "type": "command",

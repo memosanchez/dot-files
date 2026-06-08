@@ -17,6 +17,8 @@
   b = branch
   c = commit
   co = checkout
+  sw = switch    # Modern, branch-only counterpart to checkout
+  re = restore   # Modern, file-only counterpart to checkout
   st = status -s # Short status with branch information
 
   # Pretty log format with colors and concise information - reverse order (newest at bottom)
@@ -37,9 +39,6 @@
   # Delete local branches whose remotes are gone (after PR merge)
   gone = !git fetch -p && git branch -vv | grep \": gone]\" | awk '{print $1}' | xargs -r git branch -D
 
-  # Pull with force-updated tags (use instead of `git pull` when tags are moved on remote)
-  p = !git fetch origin --force --prune --prune-tags '+refs/tags/*:refs/tags/*' && git merge @{upstream}
-
 [color]
   # Enable color in Git output when possible
   ui = auto
@@ -48,6 +47,9 @@
   # Automatically format command output into columns when appropriate
   # Improves readability of commands like git branch
   ui = auto
+
+  # Always format `git branch` output in columns
+  branch = always
 
 [push]
   # Push only the current branch to the upstream branch
@@ -71,14 +73,6 @@
   # Keeps your remote tracking branches clean
   prune = true
 
-  # Also prune tags that no longer exist on the remote
-  # Keeps your tags in sync with remote repository
-  pruneTags = true
-
-  # Fetch from all remotes when running git fetch
-  # Ensures you have the latest state from all remotes
-  all = true
-
 [rebase]
   # Automatically handle commits with fixup! or squash!
   # Makes interactive rebases more powerful
@@ -91,6 +85,10 @@
   # Update refs that would be pushed during interactive rebase
   updateRefs = true
 
+  # Refuse an interactive rebase that would silently drop commits
+  # (e.g. you accidentally delete a `pick` line)
+  missingCommitsCheck = error
+
 [diff]
   # Use histogram algorithm for better diffs
   # An improved version of patience algorithm that's faster and handles some edge cases better
@@ -100,6 +98,9 @@
   # Makes it easier to see code that was relocated rather than changed
   colorMoved = plain
 
+  # Still treat reindented blocks as moves, not as new code
+  colorMovedWS = allow-indentation-change
+
   # Use a/b/c instead of old/new in diff output
   # Makes it easier to remember which side is which
   mnemonicPrefix = true
@@ -107,6 +108,20 @@
   # Detect renamed files in diffs
   # Shows files as renamed rather than as deleted and added
   renames = true
+
+[merge]
+  # Show the common ancestor in conflict markers, not just the two sides
+  # Dramatically reduces "what was I supposed to do here" moments
+  conflictStyle = zdiff3
+
+[transfer]
+  # Check object integrity on every fetch, push, and receive
+  # Catches the (rare) corrupted transfer before it lands in your repo
+  fsckObjects = true
+
+[log]
+  # Friendlier default timestamps (`2 hours ago`, `Tue 14:03`)
+  date = human
 
 [help]
   # Prompt before automatically running mistyped commands

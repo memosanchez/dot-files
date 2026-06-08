@@ -17,6 +17,8 @@
   b = branch
   c = commit
   co = checkout
+  sw = switch    # Modern, branch-only counterpart to checkout
+  re = restore   # Modern, file-only counterpart to checkout
   st = status -s # Short status with branch information
 
   # Pretty log format with colors and concise information - reverse order (newest at bottom)

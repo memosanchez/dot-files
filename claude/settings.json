@@ -2,14 +2,14 @@
   "env": {},
   "effortLevel": "xhigh",
   "cleanupPeriodDays": 90,
-  "autoUpdatesChannel": "stable",
+  "autoUpdatesChannel": "latest",
   "enableAllProjectMcpServers": false,
   "attribution": {
     "commit": "",
     "pr": ""
   },
   "permissions": {
-    "defaultMode": "acceptEdits",
+    "defaultMode": "auto",
     "additionalDirectories": [
       "~/.claude/"
     ],

@@ -83,6 +83,54 @@ rsync -avq --no-perms --backup --backup-dir="$backup_directory/shell" shell/ "$H
 echo "🔧 Setting up git configuration files..."
 rsync -avq --no-perms --backup --backup-dir="$backup_directory/git" git/ "$HOME" || { echo "❌ Git configuration sync failed. Check permissions?"; exit 1; }
 
+echo "🔏 Configuring local commit-signature verification..."
+# Build ~/.config/git/allowed_signers from THIS machine's SSH signing key and
+# the committer emails you sign as, then point git at it via ~/.gitconfig.local.
+# Makes `git verify-commit` work and silences the recurring
+# "gpg.ssh.allowedSignersFile needs to be configured" noise. Everything here is
+# machine-local: the signing key differs per machine, so none of it is tracked
+# in this repo. Idempotent, and skips quietly if signing is not set up yet.
+# Background: docs/git-ssh-signing.md
+configure_signing_verification() {
+  local signingkey key personal work email
+  local allowed="$HOME/.config/git/allowed_signers"
+  local emails=()
+
+  signingkey="$(git config --get user.signingkey 2>/dev/null || true)"
+  if [ -z "$signingkey" ]; then
+    echo "   ℹ️  Skipped: user.signingkey is not set (configure it in ~/.gitconfig.local)."
+    return 0
+  fi
+  signingkey="${signingkey/#\~/$HOME}"   # expand a leading ~
+  if [ ! -f "$signingkey" ]; then
+    echo "   ℹ️  Skipped: signing key not found at $signingkey."
+    return 0
+  fi
+  key="$(cut -d' ' -f1-2 "$signingkey")" # "ssh-ed25519 AAAA..." without the comment
+
+  # Each identity you commit as. Work first when present, so `git verify-commit`
+  # displays it (git shows the first principal that maps to the key).
+  if [ -f "$HOME/.gitconfig-brillian" ]; then
+    work="$(git config -f "$HOME/.gitconfig-brillian" user.email 2>/dev/null || true)"
+    [ -n "$work" ] && emails+=("$work")
+  fi
+  personal="$(git config --global user.email 2>/dev/null || true)"
+  [ -n "$personal" ] && emails+=("$personal")
+  if [ "${#emails[@]}" -eq 0 ]; then
+    echo "   ℹ️  Skipped: no committer email configured."
+    return 0
+  fi
+
+  mkdir -p "$HOME/.config/git"
+  : > "$allowed"
+  for email in "${emails[@]}"; do
+    printf '%s %s\n' "$email" "$key" >> "$allowed"
+  done
+  git config -f "$HOME/.gitconfig.local" gpg.ssh.allowedSignersFile '~/.config/git/allowed_signers'
+  echo "   ✅ Wrote $allowed and set gpg.ssh.allowedSignersFile."
+}
+configure_signing_verification || echo "   ⚠️  Commit-signature verification setup skipped (non-fatal)."
+
 echo "🤖 Setting up Claude configuration..."
 mkdir -p "$HOME/.claude" || { echo "❌ Failed to create .claude directory. Check permissions?"; exit 1; }
 

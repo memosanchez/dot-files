@@ -36,6 +36,9 @@ zstyle ':omz:update' mode auto
 ## (e.g., Claude Code shell commands fail with "_omz_nvm_setup_completion not found")
 if [[ -o interactive ]]; then
   zstyle ':omz:plugins:nvm' lazy yes           # Defer nvm loading for faster startup
+  ## Also lazy-load on git: git hooks (e.g. husky post-checkout running pnpm) inherit
+  ## PATH from the shell, so nvm must activate the .nvmrc version before git runs
+  zstyle ':omz:plugins:nvm' lazy-cmd git
 fi
 zstyle ':omz:plugins:nvm' autoload yes         # Auto-use .nvmrc files
 zstyle ':omz:plugins:nvm' silent-autoload yes  # Suppress version switch output

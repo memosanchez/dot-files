@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # Tests for scripts/configure-signing.sh, exercised against fixture files in
-# a temp directory. No real $HOME is read or written.
+# a temp directory. The real $HOME is never read or written: tests covering
+# the ~/ signingkey form override HOME to a fixture directory.
 set -euo pipefail
 
 script_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -26,20 +27,30 @@ assert_equals() {
   fi
 }
 
-# Each test gets a fresh fixture directory
+# Each test gets a fresh fixture directory; gitconfig_path can override the
+# first argument passed to the subject (e.g. for colon-separated lists)
 new_fixture() {
   fixture="$test_root/fixture-$tests-$RANDOM"
   mkdir -p "$fixture"
+  gitconfig_path=""
 }
 
+# Run the subject, capturing stdout into $output. A non-zero exit is recorded
+# as a failure instead of aborting the whole suite under set -e.
 run_subject() {
-  "$subject" "$fixture/gitconfig" "$fixture/gitconfig.local" "$fixture/allowed_signers" "$@"
+  local status=0
+  output="$("$subject" "${gitconfig_path:-$fixture/gitconfig}" "$fixture/gitconfig.local" "$fixture/allowed_signers" "$@")" || status=$?
+  if [ "$status" -ne 0 ]; then
+    tests=$((tests + 1))
+    failures=$((failures + 1))
+    echo "❌ subject exited $status (expected 0)"
+  fi
 }
 
 echo "— signing not configured —"
 new_fixture
 touch "$fixture/gitconfig"
-output="$(run_subject)"
+run_subject
 assert_equals "skipped" "$(echo "$output" | grep -q 'Skipped: signing is not configured' && echo skipped)" \
   "prints a skip notice when no signingkey or email is set"
 assert_equals "absent" "$([ -f "$fixture/allowed_signers" ] || echo absent)" \
@@ -49,7 +60,7 @@ echo "— literal key:: signingkey —"
 new_fixture
 git config -f "$fixture/gitconfig" user.email "personal@example.com"
 git config -f "$fixture/gitconfig" user.signingkey "key::ssh-ed25519 AAAALITERAL"
-run_subject > /dev/null
+run_subject
 assert_equals "personal@example.com ssh-ed25519 AAAALITERAL" "$(cat "$fixture/allowed_signers")" \
   "appends the email mapped to the literal key"
 assert_equals "$fixture/allowed_signers" "$(git config -f "$fixture/gitconfig.local" --get gpg.ssh.allowedSignersFile)" \
@@ -60,7 +71,7 @@ new_fixture
 printf 'ssh-ed25519 AAAAPUBLIC comment@host\n' > "$fixture/id_test.pub"
 git config -f "$fixture/gitconfig" user.email "personal@example.com"
 git config -f "$fixture/gitconfig" user.signingkey "$fixture/id_test.pub"
-run_subject > /dev/null
+run_subject
 assert_equals "personal@example.com ssh-ed25519 AAAAPUBLIC" "$(cat "$fixture/allowed_signers")" \
   "reads the .pub file and strips the comment field"
 
@@ -70,7 +81,7 @@ printf -- '-----BEGIN OPENSSH PRIVATE KEY-----\n' > "$fixture/id_test"
 printf 'ssh-ed25519 AAAAFROMPUB comment@host\n' > "$fixture/id_test.pub"
 git config -f "$fixture/gitconfig" user.email "personal@example.com"
 git config -f "$fixture/gitconfig" user.signingkey "$fixture/id_test"
-run_subject > /dev/null
+run_subject
 assert_equals "personal@example.com ssh-ed25519 AAAAFROMPUB" "$(cat "$fixture/allowed_signers")" \
   "uses the .pub file sitting next to a private-key path"
 
@@ -79,18 +90,52 @@ new_fixture
 printf -- '-----BEGIN OPENSSH PRIVATE KEY-----\n' > "$fixture/id_test"
 git config -f "$fixture/gitconfig" user.email "personal@example.com"
 git config -f "$fixture/gitconfig" user.signingkey "$fixture/id_test"
-output="$(run_subject)"
+run_subject
 assert_equals "skipped" "$(echo "$output" | grep -q 'no public key readable' && echo skipped)" \
   "refuses to copy private-key material and skips"
 assert_equals "absent" "$([ -f "$fixture/allowed_signers" ] || echo absent)" \
   "does not create allowed_signers on an unreadable key"
+
+echo "— tilde-path signingkey (HOME overridden to fixture) —"
+new_fixture
+mkdir -p "$fixture/home/.ssh"
+printf 'ssh-ed25519 AAAATILDE comment@host\n' > "$fixture/home/.ssh/id_test.pub"
+git config -f "$fixture/gitconfig" user.email "personal@example.com"
+# The literal ~ is the form under test; the subject expands it, not this shell
+# shellcheck disable=SC2088
+git config -f "$fixture/gitconfig" user.signingkey "~/.ssh/id_test.pub"
+saved_home="$HOME"
+HOME="$fixture/home"
+run_subject
+HOME="$saved_home"
+assert_equals "personal@example.com ssh-ed25519 AAAATILDE" "$(cat "$fixture/allowed_signers")" \
+  "expands a leading ~/ against \$HOME like git does"
+
+echo "— identity split across colon-separated config files —"
+new_fixture
+git config -f "$fixture/gitconfig" user.signingkey "key::ssh-ed25519 AAAASPLIT"
+git config -f "$fixture/gitconfig-xdg" user.email "xdg@example.com"
+gitconfig_path="$fixture/gitconfig:$fixture/gitconfig-xdg"
+run_subject
+assert_equals "xdg@example.com ssh-ed25519 AAAASPLIT" "$(cat "$fixture/allowed_signers")" \
+  "falls back to the next listed config file per key"
+
+echo "— first config file wins on conflict —"
+new_fixture
+git config -f "$fixture/gitconfig" user.email "primary@example.com"
+git config -f "$fixture/gitconfig" user.signingkey "key::ssh-ed25519 AAAAPREC"
+git config -f "$fixture/gitconfig-xdg" user.email "shadowed@example.com"
+gitconfig_path="$fixture/gitconfig:$fixture/gitconfig-xdg"
+run_subject
+assert_equals "primary@example.com ssh-ed25519 AAAAPREC" "$(cat "$fixture/allowed_signers")" \
+  "prefers the first listed config file when both define a key"
 
 echo "— work identity ordering —"
 new_fixture
 git config -f "$fixture/gitconfig" user.email "personal@example.com"
 git config -f "$fixture/gitconfig" user.signingkey "key::ssh-ed25519 AAAAMACHINE"
 git config -f "$fixture/gitconfig-work" user.email "work@example.com"
-run_subject "$fixture/gitconfig-work" "$fixture/gitconfig-missing" > /dev/null
+run_subject "$fixture/gitconfig-work" "$fixture/gitconfig-missing"
 assert_equals "work@example.com ssh-ed25519 AAAAMACHINE" "$(head -n 1 "$fixture/allowed_signers")" \
   "lists the work identity first"
 assert_equals "personal@example.com ssh-ed25519 AAAAMACHINE" "$(sed -n '2p' "$fixture/allowed_signers")" \
@@ -102,9 +147,9 @@ echo "— idempotency —"
 new_fixture
 git config -f "$fixture/gitconfig" user.email "personal@example.com"
 git config -f "$fixture/gitconfig" user.signingkey "key::ssh-ed25519 AAAAIDEM"
-run_subject > /dev/null
+run_subject
 before="$(cat "$fixture/allowed_signers")"
-output="$(run_subject)"
+run_subject
 assert_equals "$before" "$(cat "$fixture/allowed_signers")" \
   "a second run leaves allowed_signers unchanged"
 assert_equals "configured" "$(echo "$output" | grep -q 'already configured' && echo configured)" \
@@ -115,7 +160,7 @@ new_fixture
 printf 'existing@example.com ssh-ed25519 AAAAMANUAL' > "$fixture/allowed_signers"
 git config -f "$fixture/gitconfig" user.email "personal@example.com"
 git config -f "$fixture/gitconfig" user.signingkey "key::ssh-ed25519 AAAANEW"
-run_subject > /dev/null
+run_subject
 assert_equals "existing@example.com ssh-ed25519 AAAAMANUAL" "$(head -n 1 "$fixture/allowed_signers")" \
   "preserves the hand-edited line intact"
 assert_equals "personal@example.com ssh-ed25519 AAAANEW" "$(sed -n '2p' "$fixture/allowed_signers")" \

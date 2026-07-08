@@ -18,7 +18,9 @@ _Avoid_: snapshot
 
 **Restore**:
 Playing a backup set back over its destinations
-(`./setup.sh --restore <timestamp>`). The inverse of a sync run.
+(`./setup.sh --restore <timestamp>`). Undoes what a sync overwrote — files a
+sync newly created stay in place. A restore backs up whatever it overwrites,
+so it can itself be undone.
 
 **Skill flattening**:
 The sync step that strips category folders from
@@ -44,5 +46,6 @@ identity in `allowed_signers` so `git verify-commit` displays it.
 > pick it up from there, nothing else to touch.
 > **Dev:** And if setup overwrote something I hand-edited on this machine?
 > **Maintainer:** It's in the latest backup set. `./setup.sh --restore` lists
-> them, then pass the timestamp you want. If it was machine-local config,
-> setup only appends to those, it never rewrites them.
+> them, then pass the timestamp you want. Machine-local files are safer still.
+> Setup appends missing lines to allowed_signers and re-points
+> gpg.ssh.allowedSignersFile each run, and leaves the rest alone.

@@ -13,8 +13,11 @@
 # Usage:
 #   configure-signing.sh <gitconfig> <gitconfig_local> <allowed_signers> [work_config...]
 #
-#   gitconfig        config file read (with includes) for user.signingkey and
-#                    user.email — normally ~/.gitconfig
+#   gitconfig        colon-separated config file(s) read (with includes) for
+#                    user.signingkey and user.email; the first file that
+#                    defines a key wins — normally
+#                    ~/.gitconfig:$XDG_CONFIG_HOME/git/config, mirroring
+#                    git's --global scope
 #   gitconfig_local  machine-local config file that receives
 #                    gpg.ssh.allowedSignersFile — normally ~/.gitconfig.local
 #   allowed_signers  file that "email key" entries are appended to — normally
@@ -23,8 +26,9 @@
 #                    contributing its user.email; missing files are skipped
 #
 # Every path is an explicit argument so the script can be exercised against
-# fixture files without touching a real $HOME — see
-# tests/configure-signing-test.sh.
+# fixture files — see tests/configure-signing-test.sh. The one ambient input
+# is $HOME: a signingkey value starting with ~/ expands against it (mirroring
+# git), so tests exercising that form override HOME to a fixture directory.
 # Background: README.md "Commit Signature Verification"
 
 set -euo pipefail
@@ -57,6 +61,26 @@ resolve_public_key() {
   esac
 }
 
+# Read a key from the first config file in a colon-separated list that
+# defines it. --includes follows [include] directives (the key normally
+# lives in the included gitconfig.local). `git config` exits 1 when the key
+# is simply unset; real failures (e.g. a malformed config file) print to
+# stderr. Returns non-zero when no listed file defines the key.
+config_get() {
+  local files="$1" key="$2"
+  local file value
+  local IFS=':'
+  for file in $files; do
+    [ -f "$file" ] || continue
+    value="$(git config -f "$file" --includes --get "$key" || true)"
+    if [ -n "$value" ]; then
+      printf '%s\n' "$value"
+      return 0
+    fi
+  done
+  return 1
+}
+
 configure_signing_verification() {
   local gitconfig="$1" gitconfig_local="$2" allowed="$3"
   shift 3
@@ -64,14 +88,8 @@ configure_signing_verification() {
   local entries=()
   local added=0
 
-  # This machine's signing key. --includes follows [include] directives (the
-  # key normally lives in the included gitconfig.local). `git config` exits 1
-  # when the key is simply unset; real failures (e.g. a malformed config
-  # file) print to stderr.
-  signingkey=""
-  if [ -f "$gitconfig" ]; then
-    signingkey="$(git config -f "$gitconfig" --includes --get user.signingkey || true)"
-  fi
+  # This machine's signing key
+  signingkey="$(config_get "$gitconfig" user.signingkey || true)"
   machine_key=""
   if [ -n "$signingkey" ]; then
     if ! machine_key="$(resolve_public_key "$signingkey")"; then
@@ -97,10 +115,7 @@ configure_signing_verification() {
       entries+=("$email $identity_key")
     fi
   done
-  email=""
-  if [ -f "$gitconfig" ]; then
-    email="$(git config -f "$gitconfig" --includes --get user.email || true)"
-  fi
+  email="$(config_get "$gitconfig" user.email || true)"
   if [ -n "$email" ] && [ -n "$machine_key" ]; then
     entries+=("$email $machine_key")
   fi

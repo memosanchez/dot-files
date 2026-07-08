@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
     (machine-local; see README "Commit Signature Verification")
   - Returns to original directory after completion
 - `./setup.sh --restore [timestamp]` - Restore a backup set over its destinations
-  (no timestamp lists available backups)
+  (no timestamp lists available backups; a restore backs up what it overwrites)
 - `tests/configure-signing-test.sh` - Run the signing-configuration tests against
   fixture files (no real $HOME involved)
 - `git pull origin main` - Update the repository with latest changes before running setup

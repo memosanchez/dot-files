@@ -28,6 +28,10 @@ mirroring where they came from. To roll back:
 ./setup.sh --restore 20260708-152724  # play one back over $HOME
 ```
 
+A restore backs up whatever it overwrites into a fresh backup set, so a
+restore can be undone the same way. Files a sync newly created are not part
+of any backup set, so a restore does not remove them.
+
 ## 📂 Repository Structure
 
 - `shell/` - Shell configuration files (zsh)

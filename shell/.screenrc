@@ -1,4 +1,4 @@
-shell -bash
+shell -zsh
 startup_message off
 caption always "%{= d}%H %S"
 term xterm-256color

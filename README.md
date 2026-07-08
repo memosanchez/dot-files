@@ -15,13 +15,28 @@ A collection of shell and git configuration files to maintain a consistent devel
 The `setup.sh` script handles the installation process:
 
 1. Updates the repository with the latest changes
-2. Copies configurations to `$HOME`
+2. Installs Homebrew packages from the `Brewfile`
+3. Copies configurations to `$HOME`, backing up anything it overwrites
+
+### Backups & Restore
+
+Every run writes the files it overwrites to `~/.dotfiles-backup/<timestamp>/`,
+mirroring where they came from. To roll back:
+
+```bash
+./setup.sh --restore                  # list available backups
+./setup.sh --restore 20260708-152724  # play one back over $HOME
+```
 
 ## 📂 Repository Structure
 
-- `shell/` - Shell configuration files
+- `shell/` - Shell configuration files (zsh)
 - `git/` - Git configuration files
 - `claude/` - Claude Code configuration files
+- `scripts/` - Helper scripts called by `setup.sh`
+- `tests/` - Fixture-based tests for the helper scripts
+- `docs/adr/` - Architecture decision records
+- `CONTEXT.md` - Domain glossary for this repo
 
 ## 🔑 Per-Machine Configuration
 

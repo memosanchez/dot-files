@@ -48,6 +48,7 @@ The shared `.gitconfig` enables SSH commit signing and includes `~/.gitconfig.lo
   signingkey = ~/.ssh/id_ed25519.pub
 ```
 
+
 ### Directory-Based Email Overrides (optional)
 
 To use a different email for repos in a specific directory, add an `includeIf` rule and a matching config file:
@@ -74,3 +75,23 @@ Each machine's SSH public key must be added to GitHub as a **Signing Key** (sepa
 1. Copy your public key: `cat ~/.ssh/id_ed25519.pub`
 2. Go to **GitHub → Settings → SSH and GPG keys → New SSH key**
 3. Set **Key type** to **Signing Key** and paste the key
+
+### Commit Signature Verification
+
+With the signing key configured, `setup.sh` also makes `git verify-commit` work
+locally: it maps each committer email to this machine's public key in
+`~/.config/git/allowed_signers` and sets `gpg.ssh.allowedSignersFile` in
+`~/.gitconfig.local`. Both stay machine-local because signing keys differ per
+machine and this repo is public. Existing `allowed_signers` lines are
+preserved, so manual additions survive re-runs.
+
+To check it, `git log -1 --pretty='%G? %GS'` should print `G <you>`. An `N`
+means "could not verify", not "unsigned".
+
+Two cases never verify locally, and that is expected - don't try to fix them:
+
+- **Squash-merged commits on `main`** are signed by GitHub's web-flow GPG key.
+  They show `E` or `N` locally even though GitHub marks them Verified.
+- **Commits from another machine** were signed with that machine's key. To
+  verify them here, append that machine's public key to `allowed_signers`
+  (one line per email).

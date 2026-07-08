@@ -9,6 +9,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Installs packages from Brewfile via `brew bundle`
   - Performs git pull to fetch latest changes
   - Copies shell/, git/, and claude/ directories to $HOME using rsync
+  - Configures SSH commit-signature verification: appends missing entries to
+    ~/.config/git/allowed_signers and sets gpg.ssh.allowedSignersFile in
+    ~/.gitconfig.local (machine-local; see README "Commit Signature Verification")
   - Returns to original directory after completion
 - `git pull origin main` - Update the repository with latest changes before running setup
 

@@ -92,7 +92,7 @@ echo "🔏 Configuring local commit-signature verification..."
 # this repo. Existing allowed_signers lines are preserved (manual additions
 # survive re-runs); only missing entries are appended. Skips without failing
 # the setup when signing is not configured on this machine yet.
-# Background: docs/git-ssh-signing.md
+# Background: README.md "Commit Signature Verification"
 
 # Resolve a user.signingkey config value to its public key ("ssh-ed25519 AAAA...").
 # Handles the three forms git accepts: a literal "key::" value, a public-key

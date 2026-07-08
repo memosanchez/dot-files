@@ -3,7 +3,7 @@
 This directory contains Claude Code configuration files that are synced to `~/.claude/` by the `setup.sh` script.
 
 **Created:** 2025-10-01
-**Last Modified:** 2026-05-20
+**Last Modified:** 2026-07-08
 
 ## Files
 
@@ -137,16 +137,33 @@ description: One-line summary Claude uses to decide when this skill applies. Be 
 Instructions for Claude go here as plain Markdown.
 ```
 
+Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-07-08), with two local adaptations: the setup skill is de-branded to `setup-skills`, and Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`). `confirm-findings` and `pre-commit-check` are original to this repo. Upstream's `code-review` and `research` skills are deliberately skipped — Claude Code ships built-in `/code-review` and deep-research.
+
 Skills currently in this repo:
 
 **general/**
-- `grill-me` — interview-style stress-test of a plan; walks the decision tree, recommends answers
+- `grilling` — the shared interview discipline (model-invoked; the engine behind the grill-* skills)
+- `grill-me` — run a `/grilling` session on a plan or design
 - `handoff` — write a handoff document so a fresh agent can pick up the current conversation
+- `setup-skills` — per-repo config the engineering skills read: issue tracker (Linear/GitHub/GitLab/local), triage labels, domain doc layout
+- `teach` — multi-session teaching workspace (missions, lessons, learning records)
+- `writing-great-skills` — reference for authoring predictable skills (with `GLOSSARY.md`)
 
 **engineering/**
+- `codebase-design` — shared deep-module vocabulary and principles (with `DEEPENING.md`, `DESIGN-IT-TWICE.md`)
+- `confirm-findings` — re-verify a review's findings against actual file lines before acting on them
+- `diagnosing-bugs` — disciplined diagnosis loop: feedback loop → reproduce + minimise → hypothesise → instrument → fix
+- `domain-modeling` — build/sharpen the domain model; updates `CONTEXT.md` and ADRs inline
+- `grill-with-docs` — grilling session that also maintains the domain docs
+- `implement` — implement a spec or tickets via `/tdd` at pre-agreed seams
+- `improve-codebase-architecture` — scan for deepening opportunities, present as an HTML report, grill through picks
 - `pre-commit-check` — run lint/typecheck/test/build as a pre-commit gate (auto-detects package manager)
-- `grill-with-docs` — `grill-me` plus inline `CONTEXT.md` and ADR updates as decisions crystallize (includes `ADR-FORMAT.md` and `CONTEXT-FORMAT.md` supporting files)
-- `to-prd` — synthesize a PRD from current conversation and publish to Linear (`disable-model-invocation: true` — must invoke explicitly with `/to-prd`)
+- `prototype` — throwaway prototype to answer a design question (logic TUI or UI variants)
+- `tdd` — red → green loop with seams, anti-patterns, and loop rules
+- `to-spec` — synthesize the conversation into a spec and publish to the configured tracker
+- `to-tickets` — break a plan/spec into tracer-bullet tickets with native blocking edges
+- `triage` — move issues (and external PRs) through a triage-role state machine
+- `wayfinder` — plan work too big for one session as a map of investigation tickets
 
 To start a new skill, copy any of the above into the category folder that fits, then rename the directory and edit the frontmatter.
 
@@ -158,17 +175,15 @@ claude/
 ├── CLAUDE.md         # Global instructions for Claude Code
 ├── settings.json     # Global user settings
 ├── commands/         # Custom slash commands (add your own)
-└── skills/                       # User-authored skills, grouped by category
+└── skills/           # User-authored skills, grouped by category
     ├── general/
-    │   ├── grill-me/SKILL.md
-    │   └── handoff/SKILL.md
+    │   ├── grill-me/  grilling/  handoff/  setup-skills/
+    │   └── teach/  writing-great-skills/
     └── engineering/
-        ├── pre-commit-check/SKILL.md
-        ├── grill-with-docs/
-        │   ├── SKILL.md
-        │   ├── ADR-FORMAT.md
-        │   └── CONTEXT-FORMAT.md
-        └── to-prd/SKILL.md
+        ├── codebase-design/  confirm-findings/  diagnosing-bugs/
+        ├── domain-modeling/  grill-with-docs/  implement/
+        ├── improve-codebase-architecture/  pre-commit-check/  prototype/
+        └── tdd/  to-spec/  to-tickets/  triage/  wayfinder/
 ```
 
 ## Usage

@@ -9,6 +9,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Installs packages from Brewfile via `brew bundle`
   - Performs git pull to fetch latest changes
   - Copies shell/, git/, and claude/ directories to $HOME using rsync
+  - Configures SSH commit-signature verification: appends missing entries to
+    ~/.config/git/allowed_signers and sets gpg.ssh.allowedSignersFile in
+    ~/.gitconfig.local (machine-local; see docs/git-ssh-signing.md)
   - Returns to original directory after completion
 - `git pull origin main` - Update the repository with latest changes before running setup
 
@@ -33,6 +36,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `README.md` - Documentation for Claude Code configuration
   - `commands/` - Custom slash commands directory (empty, add your own)
   - `skills/` - User-authored skills, grouped by category (e.g., `general/`, `engineering/`); setup.sh flattens to `~/.claude/skills/<skill>/SKILL.md` on sync
+
+- `docs/` - Reference docs (e.g. `git-ssh-signing.md` on commit-signature verification)
 
 ### Top-Level Files
 - `Brewfile` - Homebrew package manifest (not synced to $HOME, used by setup.sh)

@@ -1,26 +1,26 @@
 # Git SSH commit-signature verification
 
-How to make `git` verify your own SSH-signed commits locally, and why it needs
-a small per-machine step that is intentionally not tracked in this repo.
+How to make `git` verify your own SSH-signed commits locally, and why part of
+the fix is per-machine and intentionally not tracked in this repo.
 
 ## TL;DR
 
 Your commits are already signed. Git just cannot *verify* them until you give it
 an allowed-signers file. Without one, signature-aware commands print:
 
-```
+```text
 error: gpg.ssh.allowedSignersFile needs to be configured and exist for ssh signature verification
 ```
 
-and `git log --pretty=%G?` returns `N`, which looks like "unsigned" but is not.
-The fix is one small file plus one config line, both machine-local. Run the
-script in [The fix](#the-fix) on any machine where you want local verification.
+and `git log --pretty='%G?'` returns `N`, which looks like "unsigned" but is not.
+The fix is one small file plus one config line, both machine-local. `./setup.sh`
+takes care of both on every run (see [The fix](#the-fix)).
 
 ## Symptoms
 
 Any signature-aware command surfaces it:
 
-```
+```bash
 git log --show-signature
 git log -1 --pretty='%G?'
 git verify-commit HEAD
@@ -34,7 +34,7 @@ commits). It reads as unsigned. It is not.
 Signing and verifying are two different things.
 
 - **Signing is already on.** The global config sets `commit.gpgsign = true`,
-  `gpg.format = ssh`, and `user.signingkey` points at your SSH public key (the
+  `gpg.format = ssh`, and `user.signingkey` points at your SSH key (the
   first two live in the tracked `git/.gitconfig`, the key path in the untracked
   `~/.gitconfig.local`). Every commit carries a real
   `gpgsig -----BEGIN SSH SIGNATURE-----` header.
@@ -46,7 +46,7 @@ Signing and verifying are two different things.
 So `%G? = N` describes a verification that could not run, not a missing
 signature. To check presence directly, without verifying:
 
-```
+```bash
 git cat-file commit HEAD | grep "BEGIN SSH SIGNATURE"
 ```
 
@@ -54,12 +54,13 @@ git cat-file commit HEAD | grep "BEGIN SSH SIGNATURE"
 
 1. **One key, two emails.** You sign with a single key but commit under two
    identities: your personal email from global config, and your work email
-   pulled in from `~/.gitconfig-brillian` for `brillianco` remotes. SSH
-   verification matches the commit's committer email against a principal in the
-   allowed-signers file, so the file must list **both** emails against the same
-   key. The common one-liner that uses `git config user.email` captures only
-   whichever identity is active where you run it, so it verifies one set of
-   repos and silently fails the other.
+   pulled in via an `includeIf` config file (`~/.gitconfig-brillian` or
+   `~/.gitconfig-work`). SSH verification matches the commit's committer email
+   against a principal in the allowed-signers file, so the file must list
+   **both** emails against the key each identity signs with. The common
+   one-liner that uses `git config user.email` captures only whichever identity
+   is active where you run it, so it verifies one set of repos and silently
+   fails the other.
 
 2. **Keys differ per machine, so this stays machine-local.** The allowed-signers
    file embeds the public key, and your signing key is different on each machine.
@@ -70,55 +71,31 @@ git cat-file commit HEAD | grep "BEGIN SSH SIGNATURE"
 
 ## The fix
 
-Run this on any machine where you want local verification. It reads that
-machine's own signing key and committer emails, so nothing is hardcoded and
-nothing sensitive is written into this repo.
+`./setup.sh` configures this automatically on every run, via the
+`configure_signing_verification` step in `setup.sh`. On each machine it:
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
+- resolves the global `user.signingkey` to its public key, handling all three
+  forms git accepts: a public-key path, a private-key path (it reads the `.pub`
+  next to it, never the private key), and a literal `key::` value
+- collects every committer email you sign as: work identities from
+  `~/.gitconfig-brillian` or `~/.gitconfig-work` first (using that file's own
+  `user.signingkey` if it sets one), then the personal email from global config
+- appends any missing `<email> <key>` lines to
+  `~/.config/git/allowed_signers`, preserving lines that are already there, so
+  manual additions survive re-runs
+- sets `gpg.ssh.allowedSignersFile` in the untracked `~/.gitconfig.local`
 
-# 1. This machine's SSH signing key, comment stripped -> "ssh-ed25519 AAAA..."
-signingkey=$(git config --get user.signingkey || true)
-[ -n "${signingkey}" ] || { echo "user.signingkey is not set" >&2; exit 1; }
-signingkey=${signingkey/#\~/${HOME}}          # expand a leading ~
-[ -f "${signingkey}" ] || { echo "signing key not found: ${signingkey}" >&2; exit 1; }
-key=$(cut -d' ' -f1-2 "${signingkey}")
+On a machine where signing is not configured yet, the step explains why it was
+skipped and the rest of the setup carries on.
 
-# 2. The committer emails this machine signs as. Work first when present, so
-#    `git verify-commit` displays the identity you use most here. The first
-#    principal is the one git shows, so reorder to taste.
-emails=()
-if [ -f "${HOME}/.gitconfig-brillian" ]; then
-  work=$(git config -f "${HOME}/.gitconfig-brillian" user.email || true)
-  [ -n "${work}" ] && emails+=("${work}")
-fi
-personal=$(git config --global user.email || true)
-[ -n "${personal}" ] && emails+=("${personal}")
-[ "${#emails[@]}" -gt 0 ] || { echo "no committer email found in git config" >&2; exit 1; }
+The result is `~/.config/git/allowed_signers` (one line per identity):
 
-# 3. Build the allowed-signers file (machine-local, not tracked in this repo).
-mkdir -p "${HOME}/.config/git"
-: > "${HOME}/.config/git/allowed_signers"
-for email in "${emails[@]}"; do
-  printf '%s %s\n' "${email}" "${key}" >> "${HOME}/.config/git/allowed_signers"
-done
-
-# 4. Point git at it, in the untracked machine-local config.
-git config -f "${HOME}/.gitconfig.local" gpg.ssh.allowedSignersFile '~/.config/git/allowed_signers'
-
-echo "Done. ~/.config/git/allowed_signers now contains:"
-cat "${HOME}/.config/git/allowed_signers"
-```
-
-That produces `~/.config/git/allowed_signers` (your key, one line per identity):
-
-```
+```text
 <work-email>     ssh-ed25519 AAAA...
 <personal-email> ssh-ed25519 AAAA...
 ```
 
-and adds this block to `~/.gitconfig.local`:
+and this block in `~/.gitconfig.local`:
 
 ```ini
 [gpg "ssh"]
@@ -145,17 +122,13 @@ Do not read these as "unsigned" or try to re-sign them.
   marks them Verified.
 - **Commits made on another machine** were signed with that machine's key. To
   verify those here too, add that machine's public key to `allowed_signers` (one
-  more line per email). For confirming your current work it is not needed.
+  more line per email). Setup runs preserve manually added lines, so the entry
+  survives future `./setup.sh` runs. For confirming your current work it is not
+  needed.
 
 ## A note on the displayed name
 
-`git verify-commit` names the **first** principal that maps to the key, not
-necessarily the commit's committer. Both of your identities map to the same key,
-so the script lists the email you use most on this machine first.
-
-## Optional: automate in setup.sh
-
-This is a manual step on purpose, because the key is per-machine and must not be
-tracked here. If you would rather have it run on every `setup.sh`, the script
-above is idempotent and reads only local values (it never publishes a key), so
-it can be dropped in as a setup step.
+`git verify-commit` names the **first** principal in the file that maps to the
+key, not necessarily the commit's committer. On a fresh file setup writes work
+identities first; because later runs only append missing lines, the order on an
+existing file reflects when entries were added. Reorder the lines to taste.

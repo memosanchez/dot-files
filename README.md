@@ -22,6 +22,7 @@ The `setup.sh` script handles the installation process:
 - `shell/` - Shell configuration files
 - `git/` - Git configuration files
 - `claude/` - Claude Code configuration files
+- `docs/` - Reference docs (e.g. [SSH commit-signature verification](docs/git-ssh-signing.md))
 
 ## 🔑 Per-Machine Configuration
 
@@ -47,6 +48,10 @@ The shared `.gitconfig` enables SSH commit signing and includes `~/.gitconfig.lo
 [user]
   signingkey = ~/.ssh/id_ed25519.pub
 ```
+
+With the key configured, `setup.sh` also builds `~/.config/git/allowed_signers`
+from it so `git verify-commit` works locally. See
+[docs/git-ssh-signing.md](docs/git-ssh-signing.md) for the background.
 
 ### Directory-Based Email Overrides (optional)
 

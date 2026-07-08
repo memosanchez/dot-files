@@ -84,52 +84,109 @@ echo "🔧 Setting up git configuration files..."
 rsync -avq --no-perms --backup --backup-dir="$backup_directory/git" git/ "$HOME" || { echo "❌ Git configuration sync failed. Check permissions?"; exit 1; }
 
 echo "🔏 Configuring local commit-signature verification..."
-# Build ~/.config/git/allowed_signers from THIS machine's SSH signing key and
-# the committer emails you sign as, then point git at it via ~/.gitconfig.local.
+# Ensure ~/.config/git/allowed_signers maps each committer email you sign as
+# to that identity's SSH public key, then point git at it via ~/.gitconfig.local.
 # Makes `git verify-commit` work and silences the recurring
 # "gpg.ssh.allowedSignersFile needs to be configured" noise. Everything here is
-# machine-local: the signing key differs per machine, so none of it is tracked
-# in this repo. Idempotent, and skips quietly if signing is not set up yet.
+# machine-local: signing keys differ per machine, so none of it is tracked in
+# this repo. Existing allowed_signers lines are preserved (manual additions
+# survive re-runs); only missing entries are appended. Skips without failing
+# the setup when signing is not configured on this machine yet.
 # Background: docs/git-ssh-signing.md
-configure_signing_verification() {
-  local signingkey key personal work email
-  local allowed="$HOME/.config/git/allowed_signers"
-  local emails=()
 
-  signingkey="$(git config --get user.signingkey 2>/dev/null || true)"
-  if [ -z "$signingkey" ]; then
-    echo "   ℹ️  Skipped: user.signingkey is not set (configure it in ~/.gitconfig.local)."
-    return 0
+# Resolve a user.signingkey config value to its public key ("ssh-ed25519 AAAA...").
+# Handles the three forms git accepts: a literal "key::" value, a public-key
+# path, and a private-key path (uses the .pub file next to it). Prints nothing
+# and returns non-zero when no public key can be read from the value.
+resolve_public_key() {
+  local value="$1" line
+  if [ "${value#key::}" != "$value" ]; then
+    line="${value#key::}"
+  else
+    case "$value" in
+      "~/"*) value="$HOME${value#\~}" ;;  # expand a leading ~/ like git does
+    esac
+    if [ -f "$value.pub" ]; then
+      value="$value.pub"                  # private-key path: git uses the .pub
+    fi
+    [ -f "$value" ] || return 1
+    line="$(head -n 1 "$value")" || return 1
   fi
-  signingkey="${signingkey/#\~/$HOME}"   # expand a leading ~
-  if [ ! -f "$signingkey" ]; then
-    echo "   ℹ️  Skipped: signing key not found at $signingkey."
-    return 0
-  fi
-  key="$(cut -d' ' -f1-2 "$signingkey")" # "ssh-ed25519 AAAA..." without the comment
-
-  # Each identity you commit as. Work first when present, so `git verify-commit`
-  # displays it (git shows the first principal that maps to the key).
-  if [ -f "$HOME/.gitconfig-brillian" ]; then
-    work="$(git config -f "$HOME/.gitconfig-brillian" user.email 2>/dev/null || true)"
-    [ -n "$work" ] && emails+=("$work")
-  fi
-  personal="$(git config --global user.email 2>/dev/null || true)"
-  [ -n "$personal" ] && emails+=("$personal")
-  if [ "${#emails[@]}" -eq 0 ]; then
-    echo "   ℹ️  Skipped: no committer email configured."
-    return 0
-  fi
-
-  mkdir -p "$HOME/.config/git"
-  : > "$allowed"
-  for email in "${emails[@]}"; do
-    printf '%s %s\n' "$email" "$key" >> "$allowed"
-  done
-  git config -f "$HOME/.gitconfig.local" gpg.ssh.allowedSignersFile '~/.config/git/allowed_signers'
-  echo "   ✅ Wrote $allowed and set gpg.ssh.allowedSignersFile."
+  case "$line" in
+    # Only ever emit public-key material; a private-key path without a .pub
+    # lands in the fallback and is rejected rather than copied.
+    ssh-* | ecdsa-* | sk-*) printf '%s\n' "$line" | cut -d' ' -f1-2 ;;
+    *) return 1 ;;
+  esac
 }
-configure_signing_verification || echo "   ⚠️  Commit-signature verification setup skipped (non-fatal)."
+
+configure_signing_verification() {
+  local allowed="$HOME/.config/git/allowed_signers"
+  local signingkey machine_key identity_key work_config email entry
+  local entries=()
+  local added=0
+
+  # This machine's signing key. --includes follows the [include] of
+  # ~/.gitconfig.local, where the key lives (includes are off by default when
+  # a scope flag is given). `git config` exits 1 when the key is simply unset;
+  # real failures (e.g. a malformed config file) print to stderr.
+  signingkey="$(git config --global --includes --get user.signingkey || true)"
+  machine_key=""
+  if [ -n "$signingkey" ]; then
+    if ! machine_key="$(resolve_public_key "$signingkey")"; then
+      echo "   ⚠️  Skipped: no public key readable from user.signingkey ($signingkey)."
+      return 0
+    fi
+  fi
+
+  # One line per identity you commit as. Work identities first when present,
+  # so `git verify-commit` displays them (git shows the first principal that
+  # maps to the key). A work config may carry its own user.signingkey;
+  # otherwise it signs with the machine key.
+  for work_config in "$HOME/.gitconfig-brillian" "$HOME/.gitconfig-work"; do
+    [ -f "$work_config" ] || continue
+    email="$(git config -f "$work_config" --get user.email || true)"
+    [ -n "$email" ] || continue
+    signingkey="$(git config -f "$work_config" --get user.signingkey || true)"
+    identity_key="$machine_key"
+    if [ -n "$signingkey" ]; then
+      identity_key="$(resolve_public_key "$signingkey" || true)"
+    fi
+    if [ -n "$identity_key" ]; then
+      entries+=("$email $identity_key")
+    fi
+  done
+  email="$(git config --global --includes --get user.email || true)"
+  if [ -n "$email" ] && [ -n "$machine_key" ]; then
+    entries+=("$email $machine_key")
+  fi
+
+  if [ "${#entries[@]}" -eq 0 ]; then
+    echo "   ℹ️  Skipped: signing is not configured (set user.signingkey and user.email in ~/.gitconfig.local)."
+    return 0
+  fi
+
+  mkdir -p "$HOME/.config/git" || { echo "   ⚠️  Skipped: could not create ~/.config/git."; return 0; }
+  touch "$allowed" || { echo "   ⚠️  Skipped: could not write $allowed."; return 0; }
+  # A hand-edited last line may lack a newline; don't glue an entry onto it.
+  if [ -s "$allowed" ] && [ -n "$(tail -c 1 "$allowed")" ]; then
+    echo >> "$allowed" || { echo "   ⚠️  Skipped: could not write $allowed."; return 0; }
+  fi
+  for entry in "${entries[@]}"; do
+    if ! grep -qxF "$entry" "$allowed"; then
+      echo "$entry" >> "$allowed" || { echo "   ⚠️  Skipped: could not write $allowed."; return 0; }
+      added=$((added + 1))
+    fi
+  done
+  git config -f "$HOME/.gitconfig.local" gpg.ssh.allowedSignersFile '~/.config/git/allowed_signers' \
+    || { echo "   ⚠️  Wrote $allowed but could not update ~/.gitconfig.local."; return 0; }
+  if [ "$added" -gt 0 ]; then
+    echo "   ✅ Added $added signer(s) to $allowed and set gpg.ssh.allowedSignersFile."
+  else
+    echo "   ✅ Commit-signature verification already configured."
+  fi
+}
+configure_signing_verification
 
 echo "🤖 Setting up Claude configuration..."
 mkdir -p "$HOME/.claude" || { echo "❌ Failed to create .claude directory. Check permissions?"; exit 1; }

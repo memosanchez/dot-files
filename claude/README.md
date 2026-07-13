@@ -3,7 +3,7 @@
 This directory contains Claude Code configuration files that are synced to `~/.claude/` by the `setup.sh` script.
 
 **Created:** 2025-10-01
-**Last Modified:** 2026-07-08
+**Last Modified:** 2026-07-13
 
 ## Files
 
@@ -137,7 +137,7 @@ description: One-line summary Claude uses to decide when this skill applies. Be 
 Instructions for Claude go here as plain Markdown.
 ```
 
-Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-07-08), with two local adaptations: the setup skill is de-branded to `setup-skills`, and Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`). `confirm-findings` and `pre-commit-check` are original to this repo. Upstream's `code-review` and `research` skills are deliberately skipped — Claude Code ships built-in `/code-review` and deep-research.
+Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-07-08), with three local adaptations: the setup skill is de-branded to `setup-skills`, Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`), and upstream's `code-review` is adopted as `two-axis-review` with narrowed triggers — its upstream name shadows Claude Code's built-in `/code-review` in the CLI (see mattpocock/skills#483). `confirm-findings` and `pre-commit-check` are original to this repo. Upstream's `research` skill is deliberately skipped — Claude Code ships deep-research built in.
 
 Skills currently in this repo:
 
@@ -163,6 +163,7 @@ Skills currently in this repo:
 - `to-spec` — synthesize the conversation into a spec and publish to the configured tracker
 - `to-tickets` — break a plan/spec into tracer-bullet tickets with native blocking edges
 - `triage` — move issues (and external PRs) through a triage-role state machine
+- `two-axis-review` — review a diff on two axes: Standards (repo standards + Fowler smells) and Spec (does it match the ticket?), in parallel sub-agents
 - `wayfinder` — plan work too big for one session as a map of investigation tickets
 
 To start a new skill, copy any of the above into the category folder that fits, then rename the directory and edit the frontmatter.
@@ -183,7 +184,7 @@ claude/
         ├── codebase-design/  confirm-findings/  diagnosing-bugs/
         ├── domain-modeling/  grill-with-docs/  implement/
         ├── improve-codebase-architecture/  pre-commit-check/  prototype/
-        └── tdd/  to-spec/  to-tickets/  triage/  wayfinder/
+        └── tdd/  to-spec/  to-tickets/  triage/  two-axis-review/  wayfinder/
 ```
 
 ## Usage

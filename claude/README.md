@@ -67,7 +67,6 @@ Enabled:
 - **linear** — Linear issue tracking and project management (OAuth)
 - **playwright** — browser automation, testing, screenshots
 - **typescript-lsp** — TypeScript language server integration
-- **feature-dev** — guided feature development with codebase understanding
 - **commit-commands** — git commit/push/PR helpers
 - **terraform** — Terraform registry lookups and HCP workspace tools
 - **elixir-ls-lsp** — Elixir language server integration

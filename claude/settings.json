@@ -122,7 +122,6 @@
     "linear@claude-plugins-official": true,
     "playwright@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
     "terraform@claude-plugins-official": true,
     "vercel@claude-plugins-official": false

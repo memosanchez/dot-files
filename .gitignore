@@ -9,3 +9,7 @@ claude/commands/.synced
 
 # Homebrew
 Brewfile.lock.json
+
+# The synced global gitignore (git/.gitignore) hides CONTEXT.md everywhere;
+# this repo tracks its own domain glossary deliberately.
+!CONTEXT.md

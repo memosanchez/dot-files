@@ -2,7 +2,7 @@
 # Install with: brew bundle --file=Brewfile --no-lock
 
 # Version manager for multiple runtime versions
-# Referenced in: shell/.zshrc (ASDF_SHIMS PATH)
+# Referenced in: shell/.zshrc (path_prepend of asdf shims)
 brew "asdf"
 
 # Polyglot dev tool manager (runtimes, env vars, task runner)
@@ -18,10 +18,6 @@ brew "gnupg"
 # PostgreSQL client tools without the full server
 # Referenced in: shell/.zshrc (libpq PATH)
 brew "libpq"
-
-# Programmable completion for Bash 4.2+
-# Referenced in: shell/.bash_profile (bash_completion.sh)
-brew "bash-completion@2"
 
 # ZSH shell (newer than macOS built-in)
 brew "zsh"

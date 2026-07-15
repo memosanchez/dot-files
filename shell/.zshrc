@@ -72,51 +72,33 @@ autoload -U promptinit; promptinit
 prompt pure
 
 # Development Tools
-## pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
-### Only add if directory exists and not already in PATH
-if [ -d "$PNPM_HOME" ]; then
+## Prepend a directory to PATH once — skips missing dirs and duplicates
+path_prepend() {
+  [ -d "$1" ] || return 0
   case ":$PATH:" in
-    *":$PNPM_HOME:"*) ;;
-    *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+    *":$1:"*) ;;
+    *) export PATH="$1:$PATH" ;;
   esac
-fi
+}
+
+## pnpm (global binaries live directly in PNPM_HOME, per pnpm's own snippet)
+export PNPM_HOME="$HOME/Library/pnpm"
+path_prepend "$PNPM_HOME"
 
 ## asdf version manager
-ASDF_SHIMS="${ASDF_DATA_DIR:-$HOME/.asdf}/shims"
-if [ -d "$ASDF_SHIMS" ]; then
-  case ":$PATH:" in
-    *":$ASDF_SHIMS:"*) ;;
-    *) export PATH="$ASDF_SHIMS:$PATH" ;;
-  esac
-fi
+path_prepend "${ASDF_DATA_DIR:-$HOME/.asdf}/shims"
 
 ## User local bin
-if [ -d "$HOME/.local/bin" ]; then
-  case ":$PATH:" in
-    *":$HOME/.local/bin:"*) ;;
-    *) export PATH="$HOME/.local/bin:$PATH" ;;
-  esac
-fi
+path_prepend "$HOME/.local/bin"
 
 ## PostgreSQL tools
-if [ -d "/opt/homebrew/opt/libpq/bin" ]; then
-  case ":$PATH:" in
-    *":/opt/homebrew/opt/libpq/bin:"*) ;;
-    *) export PATH="/opt/homebrew/opt/libpq/bin:$PATH" ;;
-  esac
-fi
+path_prepend "${HOMEBREW_PREFIX:-/opt/homebrew}/opt/libpq/bin"
 
 ## Google Cloud SDK (gcloud, bq, gsutil, etc.)
-if [ -d "/opt/homebrew/share/google-cloud-sdk/bin" ]; then
-  case ":$PATH:" in
-    *":/opt/homebrew/share/google-cloud-sdk/bin:"*) ;;
-    *) export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH" ;;
-  esac
-fi
+path_prepend "${HOMEBREW_PREFIX:-/opt/homebrew}/share/google-cloud-sdk/bin"
 ### gcloud shell completion
-if [ -f "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc" ]; then
-  source "/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc"
+if [ -f "${HOMEBREW_PREFIX:-/opt/homebrew}/share/google-cloud-sdk/completion.zsh.inc" ]; then
+  source "${HOMEBREW_PREFIX:-/opt/homebrew}/share/google-cloud-sdk/completion.zsh.inc"
 fi
 
 # Machine-specific overrides (not tracked in dotfiles)

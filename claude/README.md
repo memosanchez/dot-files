@@ -26,13 +26,13 @@ Global user-level settings for Claude Code. Includes:
 `effortLevel` is set to `"xhigh"` for deepest persistent reasoning. Valid values per the docs: `"low"`, `"medium"`, `"high"`, `"xhigh"`. The session-only `/effort max` command is *not* a valid settings value — it gets silently dropped if used in JSON. See https://code.claude.com/docs/en/settings.
 
 #### Auto Updates
-`autoUpdatesChannel` is set to `"stable"` to pin to the stable release channel (~1 week behind `"latest"`) for fewer surprise regressions. There is no documented `autoUpdates: false` toggle — `autoUpdatesChannel` is the only update control.
+`autoUpdatesChannel` is set to `"latest"` to track the newest release channel. Switch to `"stable"` (~1 week behind) if surprise regressions become a problem. There is no documented `autoUpdates: false` toggle — `autoUpdatesChannel` is the only update control.
 
 #### MCP Servers
 `enableAllProjectMcpServers` is set to `false` explicitly. This blocks any project's `.mcp.json` from auto-activating MCP servers without manual approval. Pair with `enabledMcpjsonServers` / `disabledMcpjsonServers` arrays for fine-grained control.
 
 #### Permissions
-- **defaultMode**: `"acceptEdits"` — auto-accepts `Read`/`Write`/`Edit` tool calls without prompting. Bash and other risky tools still prompt. Valid values: `"default"`, `"acceptEdits"`, `"plan"`, `"auto"`, `"dontAsk"`, `"bypassPermissions"`.
+- **defaultMode**: `"auto"` — lets Claude Code accept low-risk tool calls automatically while still prompting for riskier commands. Valid values: `"default"`, `"acceptEdits"`, `"plan"`, `"auto"`, `"dontAsk"`, `"bypassPermissions"`.
 
 - **additionalDirectories**: `["~/.claude/"]` — lets Claude read your memory, plans, transcripts, and shell snapshots cross-session without per-prompt approval.
 
@@ -69,11 +69,9 @@ Enabled:
 - **typescript-lsp** — TypeScript language server integration
 - **commit-commands** — git commit/push/PR helpers
 - **terraform** — Terraform registry lookups and HCP workspace tools
-- **elixir-ls-lsp** — Elixir language server integration
 
 Explicitly disabled (kept in file for documentation):
 - **vercel** — Vercel deploy / project management
-- **posthog** — PostHog analytics integration
 
 #### Status Line
 Custom status line displaying model name and context window usage:
@@ -107,7 +105,7 @@ Repo layout:
 ```
 skills/
 ├── general/
-│   └── branch-status/SKILL.md
+│   └── grill-me/SKILL.md
 └── engineering/
     └── pre-commit-check/SKILL.md
 ```
@@ -115,13 +113,13 @@ skills/
 After `./setup.sh` runs:
 ```
 ~/.claude/skills/
-├── branch-status/SKILL.md
+├── grill-me/SKILL.md
 └── pre-commit-check/SKILL.md
 ```
 
 **Rules enforced by setup.sh:**
 - Every SKILL.md must live inside a category folder (no `skills/<skill>/SKILL.md` at the top level — setup will bail).
-- Skill names must be unique across categories (no two categories can both define `branch-status` — setup will bail).
+- Skill names must be unique across categories (no two categories can both define `grill-me` — setup will bail).
 
 A skill is a packaged set of instructions Claude can invoke — automatically (when a request matches the skill's `description` frontmatter) or manually via `/<skill-name>` (unless `disable-model-invocation: true` is set). See https://code.claude.com/docs/en/skills for the full authoring guide.
 

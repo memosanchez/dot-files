@@ -125,7 +125,7 @@ restore_backup() {
 # stays the single place that knows where claude/ lands.
 sync_skills() {
   local name="$1" destination="$2"
-  local loose_skills duplicates category_dir
+  local loose_skills duplicates category_dir live_skill_dir skill_name
   [ -d "$name/skills" ] || return 0
 
   # Bail if any SKILL.md is sitting flat (not inside a category folder)
@@ -155,6 +155,17 @@ sync_skills() {
   for category_dir in "$name"/skills/*/; do
     [ -d "$category_dir" ] || continue
     sync_dir "$category_dir" "$destination/skills/" "$name/skills"
+  done
+
+  # Warn about live skills the repo doesn't know about. Sync never deletes,
+  # so renaming a skill in the repo leaves the old copy behind in
+  # <destination>/skills — and that stale copy stays model-invocable.
+  for live_skill_dir in "$destination"/skills/*/; do
+    [ -d "$live_skill_dir" ] || continue
+    skill_name="$(basename "$live_skill_dir")"
+    if ! find "$name/skills" -mindepth 2 -maxdepth 2 -type d -name "$skill_name" | grep -q .; then
+      echo "⚠️  $destination/skills/$skill_name is not in this repo (stale rename or third-party install) — consider deleting it"
+    fi
   done
 }
 

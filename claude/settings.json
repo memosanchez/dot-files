@@ -81,6 +81,7 @@
     ],
     "deny": [
       "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)",
       "Bash(sudo:*)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
@@ -93,14 +94,22 @@
       "Bash(dd:*)",
       "Bash(mkfs:*)",
       "Bash(chmod -R 777:*)",
-      "Read(.env)",
-      "Read(.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
       "Read(**/*.pem)",
       "Read(**/*.key)",
       "Read(**/secrets/**)",
       "Read(**/credentials.json)",
       "Read(**/.aws/**)",
-      "Read(**/.ssh/**)"
+      "Read(**/.ssh/**)",
+      "Edit(**/.env)",
+      "Edit(**/.env.*)",
+      "Edit(**/*.pem)",
+      "Edit(**/*.key)",
+      "Edit(**/secrets/**)",
+      "Edit(**/credentials.json)",
+      "Edit(**/.aws/**)",
+      "Edit(**/.ssh/**)"
     ]
   },
   "hooks": {

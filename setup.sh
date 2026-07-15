@@ -256,7 +256,7 @@ echo "🔏 Configuring local commit-signature verification..."
 "${script_directory}/scripts/configure-signing.sh" \
   "$HOME/.gitconfig:${XDG_CONFIG_HOME:-$HOME/.config}/git/config" \
   "$HOME/.gitconfig.local" \
-  "$HOME/.config/git/allowed_signers" \
+  "${XDG_CONFIG_HOME:-$HOME/.config}/git/allowed_signers" \
   "$HOME/.gitconfig-brillian" "$HOME/.gitconfig-work"
 
 # Return to the original directory

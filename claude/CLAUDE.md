@@ -1,12 +1,5 @@
 # Code Style Guidelines
 
-## General Principles
-
-- Write clear, maintainable, and well-documented code
-- Favor explicitness over cleverness
-- Follow the principle of least surprise
-- Keep functions small and focused on a single responsibility
-
 ## Markdown
 
 - Files should be well-structured with clear headings and subheadings
@@ -32,20 +25,6 @@ This rule applies to prose meant to sound human. It does **not** apply to struct
 - Document complex types with JSDoc comments, but prefer simple comments over JSDoc where reasonable
 - Use readonly for immutable data structures
 - Prefer const assertions where appropriate
-
-## JavaScript
-
-- Use modern ES6+ features (const/let, arrow functions, destructuring, async/await)
-- Avoid var declarations
-- Use strict equality (===) over loose equality (==)
-- Handle promises properly - always catch errors
-
-## Python
-
-- Follow PEP 8 style guidelines
-- Use type hints for function signatures
-- Write docstrings for modules, classes, and functions
-- Prefer list comprehensions over map/filter for readability
 
 ## Shell Scripts
 
@@ -82,81 +61,6 @@ This rule applies to prose meant to sound human. It does **not** apply to struct
 - Keep branches short-lived - merge frequently
 - Rebase on main/master before merging to keep history clean
 
-# Testing
-
-## Philosophy
-
-- Write tests for all new features and bug fixes
-- Aim for high coverage but prioritize meaningful tests over coverage percentage
-- Test behavior, not implementation details
-- Use descriptive test names that explain what is being tested
-
-## Test Structure
-
-- Arrange-Act-Assert (AAA) pattern
-- One assertion per test when possible
-- Use test fixtures and factories for complex setup
-- Mock external dependencies appropriately
-
-## Test Types
-
-- Unit tests: Test individual functions/methods in isolation
-- Integration tests: Test component interactions
-- E2E tests: Test critical user workflows
-- Run tests before committing code
-
-# Code Review
-
-## When Reviewing
-
-- Check for logical errors and edge cases
-- Verify tests are adequate and passing
-- Ensure code follows style guidelines
-- Look for security vulnerabilities
-- Consider performance implications
-- Suggest improvements, don't just criticize
-
-## When Being Reviewed
-
-- Keep PRs reasonably sized (< 400 lines when possible)
-- Respond to all comments
-- Be open to feedback and suggestions
-- Don't take criticism personally
-
-# Documentation
-
-## Code Documentation
-
-- Write self-documenting code with clear names
-- Add comments for "why" not "what" - code shows what, comments explain why
-- Document public APIs thoroughly
-- Keep documentation up-to-date with code changes
-- Include usage examples for complex functions
-
-## Project Documentation
-
-- Keep README.md current with setup instructions
-- Document architecture decisions
-- Maintain changelog for user-facing changes
-- Include troubleshooting guides
-
-# Error Handling
-
-## General Principles
-
-- Fail fast and loud - don't hide errors
-- Provide actionable error messages
-- Log errors with sufficient context for debugging
-- Use appropriate error types/classes
-- Clean up resources in error cases (use try/finally or context managers)
-
-## Specific Practices
-
-- Validate inputs early
-- Don't catch exceptions you can't handle
-- Include error codes for user-facing errors
-- Distinguish between expected errors (validation) and unexpected errors (bugs)
-
 # Workflow
 
 ## Development Process
@@ -175,11 +79,4 @@ This rule applies to prose meant to sound human. It does **not** apply to struct
 
 # Security
 
-## Best Practices
-
 - Never commit secrets, tokens, or credentials
-- Use environment variables for configuration
-- Validate and sanitize all user input
-- Follow the principle of least privilege
-- Keep dependencies up-to-date
-- Review security advisories for dependencies

@@ -41,9 +41,10 @@ identity in `allowed_signers` so `git verify-commit` displays it.
 
 **Vendored skill**:
 A skill copied from mattpocock/skills into `claude/skills/` as editable files
-this repo owns. Local edits are expected and survive upgrades; skills we
-authored ourselves (`standup`, `two-axis-review`, …) are not vendored, they
-are simply ours.
+this repo owns. Local edits are expected and survive upgrades. Rename-forks
+that still take upstream syncs (`two-axis-review`, from upstream's
+`code-review`) are vendored too; only skills with no upstream counterpart
+(`standup`, `confirm-findings`, `pre-commit-check`) are simply ours.
 _Avoid_: plugin skill, third-party skill
 
 **Upstream sync**:

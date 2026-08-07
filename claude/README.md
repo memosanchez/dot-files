@@ -134,7 +134,7 @@ description: One-line summary Claude uses to decide when this skill applies. Be 
 Instructions for Claude go here as plain Markdown.
 ```
 
-Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-07-08), with three local adaptations: the setup skill is de-branded to `setup-skills`, Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`), and upstream's `code-review` is adopted as `two-axis-review` with narrowed triggers — its upstream name shadows Claude Code's built-in `/code-review` in the CLI (see mattpocock/skills#483). `confirm-findings` and `pre-commit-check` are original to this repo. Upstream's `research` skill is deliberately skipped — Claude Code ships deep-research built in.
+Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-08-06, v1.2.3), with three local adaptations: the setup skill is de-branded to `setup-skills`, Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`), and upstream's `code-review` is adopted as `two-axis-review` with narrowed triggers — its upstream name shadows Claude Code's built-in `/code-review` in the CLI (see mattpocock/skills#483). `confirm-findings`, `pre-commit-check`, and `standup` are original to this repo. Upstream's `ask-matt` router and `misc/` bucket are deliberately skipped; see `docs/adr/0002` for the vendoring model.
 
 Skills currently in this repo:
 
@@ -143,8 +143,11 @@ Skills currently in this repo:
 - `grill-me` — run a `/grilling` session on a plan or design
 - `handoff` — write a handoff document so a fresh agent can pick up the current conversation
 - `setup-skills` — per-repo config the engineering skills read: issue tracker (Linear/GitHub/GitLab/local), triage labels, domain doc layout
+- `standup` — copy-pasteable Slack standup from the previous working day's GitHub activity
 - `teach` — multi-session teaching workspace (missions, lessons, learning records)
-- `writing-great-skills` — reference for authoring predictable skills (with `GLOSSARY.md`)
+- `to-questionnaire` — turn a decision you can't answer alone into a questionnaire for someone else
+- `wait-what` — re-pitch the last message when it didn't land
+- `writing-for-agents` — reference for authoring predictable skills (with `SKILL-MECHANICS.md`)
 
 **engineering/**
 - `codebase-design` — shared deep-module vocabulary and principles (with `DEEPENING.md`, `DESIGN-IT-TWICE.md`)
@@ -155,13 +158,16 @@ Skills currently in this repo:
 - `implement` — implement a spec or tickets via `/tdd` at pre-agreed seams
 - `improve-codebase-architecture` — scan for deepening opportunities, present as an HTML report, grill through picks
 - `pre-commit-check` — run lint/typecheck/test/build as a pre-commit gate (auto-detects package manager)
-- `prototype` — throwaway prototype to answer a design question (logic TUI or UI variants)
+- `prototype` — throwaway prototype to answer a design question (single shareable HTML file or UI variants)
+- `research` — investigate a question against primary sources, capture findings as a Markdown file in the repo
+- `resolving-merge-conflicts` — resolve an in-progress git merge/rebase conflict
 - `tdd` — red → green loop with seams, anti-patterns, and loop rules
 - `to-spec` — synthesize the conversation into a spec and publish to the configured tracker
 - `to-tickets` — break a plan/spec into tracer-bullet tickets with native blocking edges
 - `triage` — move issues (and external PRs) through a triage-role state machine
 - `two-axis-review` — review a diff on two axes: Standards (repo standards + Fowler smells) and Spec (does it match the ticket?), in parallel sub-agents
 - `wayfinder` — plan work too big for one session as a map of investigation tickets
+- `wizard` — generate an interactive bash walkthrough for steps only a human can do (with `template.sh`)
 
 To start a new skill, copy any of the above into the category folder that fits, then rename the directory and edit the frontmatter.
 
@@ -175,13 +181,14 @@ claude/
 ├── commands/         # Custom slash commands (add your own)
 └── skills/           # User-authored skills, grouped by category
     ├── general/
-    │   ├── grill-me/  grilling/  handoff/  setup-skills/
-    │   └── teach/  writing-great-skills/
+    │   ├── grill-me/  grilling/  handoff/  setup-skills/  standup/
+    │   └── teach/  to-questionnaire/  wait-what/  writing-for-agents/
     └── engineering/
         ├── codebase-design/  confirm-findings/  diagnosing-bugs/
         ├── domain-modeling/  grill-with-docs/  implement/
         ├── improve-codebase-architecture/  pre-commit-check/  prototype/
-        └── tdd/  to-spec/  to-tickets/  triage/  two-axis-review/  wayfinder/
+        ├── research/  resolving-merge-conflicts/  tdd/  to-spec/
+        └── to-tickets/  triage/  two-axis-review/  wayfinder/  wizard/
 ```
 
 ## Usage

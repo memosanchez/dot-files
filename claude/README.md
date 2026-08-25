@@ -81,8 +81,10 @@ Custom status line displaying model name and context window usage:
 #### Environment Variables
 The `env` object can be used to set environment variables for Claude Code sessions.
 
-#### Co-authorship
-`attribution.commit` and `attribution.pr` control commit/PR attribution templates. Both are empty strings here to suppress the `Co-Authored-By: Claude` trailer in commits and PR descriptions. The older `includeCoAuthoredBy` boolean is deprecated in current docs — use `attribution` instead.
+#### Attribution
+`attribution.commit` and `attribution.pr` control commit/PR attribution templates. Both are empty strings here to suppress the `Co-Authored-By: Claude` trailer in commits and PR descriptions (the schema requires strings — `null` is rejected). The older `includeCoAuthoredBy` boolean is deprecated in current docs — use `attribution` instead.
+
+`attribution.sessionUrl: false` stops Claude Code from appending the `https://claude.ai/code/session_...` link to commits and PR descriptions (default is `true`; a local session posted one to a PR on 2026-08-24, which is why this is pinned here). Caveat: these settings only cover sessions that read `~/.claude/settings.json` — local CLI and Remote Control (`/rc`) sessions. True cloud sessions started from claude.ai/code run on Anthropic infra and read only a `.claude/settings.json` committed inside the target repo, so commit the attribution block there if you ever start using them.
 
 ### Project-Specific Settings
 You can create `.claude/settings.local.json` in any project directory to override global settings:

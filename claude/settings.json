@@ -6,8 +6,10 @@
   "enableAllProjectMcpServers": false,
   "attribution": {
     "commit": "",
-    "pr": ""
+    "pr": "",
+    "sessionUrl": false
   },
+  "skipWorkflowUsageWarning": true,
   "permissions": {
     "defaultMode": "auto",
     "additionalDirectories": [

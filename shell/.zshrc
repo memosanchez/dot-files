@@ -81,9 +81,10 @@ path_prepend() {
   esac
 }
 
-## pnpm (global binaries live directly in PNPM_HOME, per pnpm's own snippet)
+## pnpm (pnpm 11 puts global binaries in $PNPM_HOME/bin; older installs used $PNPM_HOME itself)
 export PNPM_HOME="$HOME/Library/pnpm"
 path_prepend "$PNPM_HOME"
+path_prepend "$PNPM_HOME/bin"
 
 ## asdf version manager
 path_prepend "${ASDF_DATA_DIR:-$HOME/.asdf}/shims"

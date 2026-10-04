@@ -38,7 +38,7 @@ of any backup set, so a restore does not remove them.
 - `git/` - Git configuration files
 - `claude/` - Claude Code configuration files
 - `scripts/` - Helper scripts called by `setup.sh`
-- `tests/` - Fixture-based tests for the helper scripts
+- `tests/` - Fixture-based tests for the helper scripts and the `git gone` alias
 - `docs/adr/` - Architecture decision records
 - `CONTEXT.md` - Domain glossary for this repo
 

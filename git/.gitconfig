@@ -36,8 +36,38 @@
   # Uncommit - Reset the last commit while keeping changes staged
   uncommit = reset --soft HEAD~1
 
-  # Delete local branches whose remotes are gone (after PR merge)
-  gone = !git fetch -p && git branch -vv | grep \": gone]\" | awk '{print $1}' | xargs -r git branch -D
+  # Delete local branches whose upstream is gone, but only when GitHub shows a
+  # merged PR at the branch's tip; without gh, or offline, nothing is deleted.
+  # A linked worktree holding the branch is removed first. Git keeps dirty or
+  # locked worktrees, and the current and main worktrees are skipped.
+  # `git gone -n` prints the commands instead of running them.
+  # Keep the value in double quotes and escape only \" and \\: an unquoted ;
+  # or # cuts the alias short, and any other escape is a parse error that
+  # breaks every git command. Tested by tests/git-gone-test.sh.
+  gone = "!f() { \
+    run=; [ \"$1\" = -n ] && run=echo; \
+    command -v gh >/dev/null || { echo 'git gone: gh not found, nothing deleted' >&2; return 1; }; \
+    git fetch --prune || return; \
+    main=$(git worktree list --porcelain | sed -n '1s/^worktree //p'); \
+    git for-each-ref --omit-empty \
+      --format='%(if:equals=gone)%(upstream:track,nobracket)%(then)%(if)%(HEAD)%(then)here%(else)-%(end) %(objectname) %(refname:short) %(worktreepath)%(end)' \
+      refs/heads | \
+    while read -r head sha branch wt; do \
+      if [ \"$head\" = here ] || [ \"$wt\" = \"$main\" ]; then \
+        echo \"Skipped $branch: checked out in $wt\"; \
+        continue; \
+      fi; \
+      merged=$(gh pr list --head \"$branch\" --state merged --json headRefOid --jq '.[].headRefOid' </dev/null) \
+        || { echo \"Kept $branch: couldn't check PR\"; continue; }; \
+      printf '%s\\n' \"$merged\" | grep -qx \"$sha\" \
+        || { echo \"Kept $branch: no merged PR at this commit\"; continue; }; \
+      if [ -n \"$wt\" ]; then \
+        $run git worktree remove \"$wt\" || { echo \"Kept $branch: $wt was not removed\"; continue; }; \
+        [ -n \"$run\" ] || echo \"Removed worktree $wt\"; \
+      fi; \
+      $run git branch -D \"$branch\"; \
+    done; \
+  }; f"
 
 [color]
   # Enable color in Git output when possible

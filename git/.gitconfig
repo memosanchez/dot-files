@@ -40,7 +40,8 @@
   # merged PR at the branch's tip; without gh, or offline, nothing is deleted.
   # A linked worktree holding the branch is removed first. Git keeps dirty or
   # locked worktrees, and the current and main worktrees are skipped.
-  # `git gone -n` prints the commands instead of running them.
+  # `git gone -n` prints the commands instead of running them; a real run may
+  # still keep a worktree that turns out to be dirty or locked.
   # Keep the value in double quotes and write " as \" and \ as \\. An
   # unquoted ; or # cuts the alias short, an unknown escape such as \[ is a
   # parse error that breaks every git command, and \n, \t or \b silently
@@ -63,10 +64,10 @@
         echo \"Skipped $branch: checked out in $wt\"; \
         continue; \
       fi; \
-      merged=$(gh pr list --head \"$branch\" --state merged --json headRefOid --jq '.[].headRefOid' </dev/null) \
+      merged=$(GONE_SHA=$sha gh pr list --head \"$branch\" --state merged --json headRefOid \
+        --jq 'any(.[]; .headRefOid == env.GONE_SHA)' </dev/null) \
         || { echo \"Kept $branch: couldn't check PR\"; continue; }; \
-      printf '%s\\n' \"$merged\" | grep -qx \"$sha\" \
-        || { echo \"Kept $branch: no merged PR at this commit\"; continue; }; \
+      [ \"$merged\" = true ] || { echo \"Kept $branch: no merged PR at this commit\"; continue; }; \
       if [ -n \"$wt\" ]; then \
         $run git worktree remove \"$wt\" || { echo \"Kept $branch: $wt was not removed\"; continue; }; \
         [ -n \"$run\" ] || echo \"Removed worktree $wt\"; \

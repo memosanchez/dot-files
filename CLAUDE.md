@@ -19,6 +19,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   (no timestamp lists available backups; a restore backs up what it overwrites)
 - `tests/configure-signing-test.sh` - Run the signing-configuration tests against
   fixture files (no real $HOME involved)
+- `tests/git-gone-test.sh` - Run the `git gone` alias from `git/.gitconfig`
+  against fixture repos with a stub gh (no real repo or GitHub involved)
 - `git pull origin main` - Update the repository with latest changes before running setup
 
 ## Architecture

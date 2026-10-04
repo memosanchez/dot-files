@@ -93,13 +93,13 @@ add_worktree() {
 # What GitHub does on merge: record a merged PR at the branch's current tip,
 # then delete the remote branch
 merge_pr() {
-  echo "$1 merged $(git -C "$repo" rev-parse "$1")" >> "$GH_PRS"
+  echo "$1 merged $(git -C "$repo" rev-parse "refs/heads/$1")" >> "$GH_PRS"
   git -C "$fixture/origin.git" branch -q -D "$1"
 }
 
 # A PR closed without merging, its remote branch deleted by hand
 close_pr() {
-  echo "$1 closed $(git -C "$repo" rev-parse "$1")" >> "$GH_PRS"
+  echo "$1 closed $(git -C "$repo" rev-parse "refs/heads/$1")" >> "$GH_PRS"
   git -C "$fixture/origin.git" branch -q -D "$1"
 }
 
@@ -146,6 +146,14 @@ assert_equals "deleted" "$(branch_state merged)" "deletes a merged branch that h
 assert_equals "present" "$(branch_state live)" "keeps a branch whose upstream still exists"
 assert_equals "present" "$(branch_state local-only)" "keeps a branch that was never pushed"
 assert_equals "present" "$(branch_state main)" "keeps main"
+
+echo "— branch sharing its name with a tag —"
+new_fixture
+push_branch release
+merge_pr release
+git -C "$repo" tag release main
+run_gone "$repo"
+assert_equals "deleted" "$(branch_state release)" "looks up the PR by the branch name, not heads/<name>"
 
 echo "— commits added after the PR merged —"
 new_fixture
@@ -263,12 +271,28 @@ new_fixture
 push_branch feature
 add_worktree feature
 merge_pr feature
+push_branch unmerged
+close_pr unmerged
 run_gone "$repo" -n
 assert_equals "present" "$(worktree_state feature)" "keeps the worktree"
 assert_equals "present" "$(branch_state feature)" "keeps the branch"
 assert_equals "git worktree remove $fixture/wt-feature" \
   "$(output_line "git worktree remove $fixture/wt-feature")" "prints the worktree removal"
 assert_equals "git branch -D feature" "$(output_line "git branch -D feature")" "prints the branch deletion"
+assert_equals "Kept unmerged: no merged PR at this commit" \
+  "$(output_line "Kept unmerged: no merged PR at this commit")" "still runs the PR check"
+assert_equals "" "$(output_line "git branch -D unmerged")" "does not list a branch that fails the PR check"
+
+echo "— unknown argument —"
+new_fixture
+push_branch feature
+add_worktree feature
+merge_pr feature
+run_gone "$repo" --dry-run
+assert_equals "present" "$(worktree_state feature)" "keeps the worktree"
+assert_equals "present" "$(branch_state feature)" "keeps the branch"
+assert_equals "usage: git gone [-n]" "$output" "prints usage"
+assert_equals "2" "$status" "exits 2"
 
 echo ""
 echo "$tests tests, $failures failure(s)"

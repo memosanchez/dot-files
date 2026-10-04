@@ -41,16 +41,22 @@
   # A linked worktree holding the branch is removed first. Git keeps dirty or
   # locked worktrees, and the current and main worktrees are skipped.
   # `git gone -n` prints the commands instead of running them.
-  # Keep the value in double quotes and escape only \" and \\: an unquoted ;
-  # or # cuts the alias short, and any other escape is a parse error that
-  # breaks every git command. Tested by tests/git-gone-test.sh.
+  # Keep the value in double quotes and write " as \" and \ as \\. An
+  # unquoted ; or # cuts the alias short, an unknown escape such as \[ is a
+  # parse error that breaks every git command, and \n, \t or \b silently
+  # become control characters. Tested by tests/git-gone-test.sh.
   gone = "!f() { \
-    run=; [ \"$1\" = -n ] && run=echo; \
+    run=; \
+    case \"$*\" in \
+      '') ;; \
+      -n) run=echo ;; \
+      *) echo 'usage: git gone [-n]' >&2; return 2 ;; \
+    esac; \
     command -v gh >/dev/null || { echo 'git gone: gh not found, nothing deleted' >&2; return 1; }; \
     git fetch --prune || return; \
     main=$(git worktree list --porcelain | sed -n '1s/^worktree //p'); \
     git for-each-ref --omit-empty \
-      --format='%(if:equals=gone)%(upstream:track,nobracket)%(then)%(if)%(HEAD)%(then)here%(else)-%(end) %(objectname) %(refname:short) %(worktreepath)%(end)' \
+      --format='%(if:equals=gone)%(upstream:track,nobracket)%(then)%(if)%(HEAD)%(then)here%(else)-%(end) %(objectname) %(refname:lstrip=2) %(worktreepath)%(end)' \
       refs/heads | \
     while read -r head sha branch wt; do \
       if [ \"$head\" = here ] || [ \"$wt\" = \"$main\" ]; then \

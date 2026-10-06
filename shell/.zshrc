@@ -86,8 +86,10 @@ export PNPM_HOME="$HOME/Library/pnpm"
 path_prepend "$PNPM_HOME"
 path_prepend "$PNPM_HOME/bin"
 
-## asdf version manager
-path_prepend "${ASDF_DATA_DIR:-$HOME/.asdf}/shims"
+## mise version manager (re-prepends its tool paths on each prompt, per directory)
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
+fi
 
 ## User local bin
 path_prepend "$HOME/.local/bin"

@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Installs packages from Brewfile via `brew bundle`
   - Performs git pull to fetch latest changes
   - Syncs every directory in the sync manifest (shell/ → $HOME, git/ → $HOME,
-    claude/ → ~/.claude) using rsync, backing up overwritten files to
+    claude/ → ~/.claude, mise/ → ~/.config/mise) using rsync, backing up overwritten files to
     ~/.dotfiles-backup/<timestamp>/
   - Flattens claude/skills/<category>/<skill>/ to ~/.claude/skills/<skill>/
   - Configures SSH commit-signature verification via scripts/configure-signing.sh

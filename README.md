@@ -37,6 +37,7 @@ of any backup set, so a restore does not remove them.
 - `shell/` - Shell configuration files (zsh)
 - `git/` - Git configuration files
 - `claude/` - Claude Code configuration files
+- `mise/` - Global mise config (tool versions, `.terraform-version` support)
 - `scripts/` - Helper scripts called by `setup.sh`
 - `tests/` - Fixture-based tests for the helper scripts and the `git gone` alias
 - `docs/adr/` - Architecture decision records

@@ -1,11 +1,8 @@
 # Brewfile - Homebrew packages for this machine
 # Install with: brew bundle --file=Brewfile --no-lock
 
-# Version manager for multiple runtime versions
-# Referenced in: shell/.zshrc (path_prepend of asdf shims)
-brew "asdf"
-
-# Polyglot dev tool manager (runtimes, env vars, task runner)
+# Polyglot dev tool manager (runtimes, env vars, task runner); also supplies terraform
+# Referenced in: shell/.zshrc (mise activate), mise/config.toml
 brew "mise"
 
 # Pretty, minimal, and fast ZSH prompt
@@ -48,9 +45,6 @@ brew "prettyping"
 
 # AWS command-line interface
 brew "awscli"
-
-# Infrastructure as code tool
-brew "terraform"
 
 # Google Cloud SQL Auth Proxy
 brew "cloud-sql-proxy"

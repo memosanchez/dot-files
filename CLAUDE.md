@@ -42,7 +42,7 @@ The setup process is idempotent - running it multiple times is safe and will
 update configurations to the latest version. Sync never deletes: removing a
 file from the repo leaves the copy already in $HOME in place.
 
-See `CONTEXT.md` for the domain glossary and `docs/adr/` for recorded
+See `GLOSSARY.md` for the domain glossary and `docs/adr/` for recorded
 decisions (notably: no sandbox seam in setup.sh - backups are the safety net).
 
 ## Coding Conventions

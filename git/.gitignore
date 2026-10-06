@@ -8,5 +8,8 @@ node_modules
 *.db
 TODO
 .claude/settings.local.json
+.claude/worktrees
 CC-*.md
 CONTEXT.md
+GLOSSARY.md
+GLOSSARY-MAP.md

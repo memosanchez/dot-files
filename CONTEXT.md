@@ -53,6 +53,18 @@ mattpocock/skills release while re-applying our local edits. See
 `docs/adr/0002` for why we vendor instead of subscribing to the plugin.
 _Avoid_: update, bump
 
+**mise tool**:
+A runtime or CLI whose version matters per directory (node, terraform) or that
+must survive switching runtimes (global npm CLIs). Declared in
+`mise/config.toml`; a repo's `.nvmrc` or `.terraform-version` overrides the
+default there.
+_Avoid_: global npm package (those live inside one Node version)
+
+**Brewfile package**:
+A machine-wide tool with one unversioned install, always Homebrew's current
+release (`gh`, `jq`, `gcloud`). Anything a repo pins belongs in mise instead.
+_Avoid_: dependency
+
 ## Example dialogue
 
 > **Dev:** Where do I add a new synced directory?

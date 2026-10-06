@@ -31,22 +31,9 @@ ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 ## Auto-update behavior
 zstyle ':omz:update' mode auto
 
-## NVM plugin configuration
-## Only use lazy loading in interactive shells - it has bugs in non-interactive contexts
-## (e.g., Claude Code shell commands fail with "_omz_nvm_setup_completion not found")
-if [[ -o interactive ]]; then
-  zstyle ':omz:plugins:nvm' lazy yes           # Defer nvm loading for faster startup
-  ## Also lazy-load on git: git hooks (e.g. husky post-checkout running pnpm) inherit
-  ## PATH from the shell, so nvm must activate the .nvmrc version before git runs
-  zstyle ':omz:plugins:nvm' lazy-cmd git
-fi
-zstyle ':omz:plugins:nvm' autoload yes         # Auto-use .nvmrc files
-zstyle ':omz:plugins:nvm' silent-autoload yes  # Suppress version switch output
-
-## Load Oh My Zsh plugins
+## Load Oh My Zsh plugins (Node versions come from mise, below)
 plugins=(
   git
-  nvm
 )
 
 ## Initialize Oh My Zsh
@@ -86,7 +73,8 @@ export PNPM_HOME="$HOME/Library/pnpm"
 path_prepend "$PNPM_HOME"
 path_prepend "$PNPM_HOME/bin"
 
-## mise version manager (re-prepends its tool paths on each prompt, per directory)
+## mise version manager (re-prepends its tool paths on each prompt, per directory;
+## .zprofile puts its shims on PATH for git hooks, IDEs, and other non-interactive shells)
 if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
 fi

@@ -1,10 +1,19 @@
-# Global mise config, synced to ~/.config/mise/config.toml by setup.sh.
+# Global mise config, synced to ~/.config/mise/config.toml by setup.sh,
+# which then runs `mise install` so every tool listed here is present.
 
 [settings]
-# Honour .terraform-version files (off by default in mise), so repos that pin
-# Terraform that way get their version without a mise.toml of their own.
-idiomatic_version_file_enable_tools = ["terraform"]
+# Honour .terraform-version and .nvmrc files (off by default in mise), so repos
+# that pin versions that way get them without a mise.toml of their own.
+idiomatic_version_file_enable_tools = ["terraform", "node"]
 
 [tools]
-# Default outside any repo that pins a version.
+# Defaults outside any repo that pins a version.
 terraform = "latest"
+node = "lts"
+
+# Global CLIs. Each installs into its own directory, independent of the active
+# Node version, so switching Node never hides them. Add new ones with
+# `mise use -g npm:<pkg>` instead of `npm install -g`.
+"npm:typescript" = "latest"
+"npm:@posthog/cli" = "latest"
+"npm:@hubspot/cli" = "latest"

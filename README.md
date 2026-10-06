@@ -17,11 +17,14 @@ The `setup.sh` script handles the installation process:
 1. Updates the repository with the latest changes
 2. Installs Homebrew packages from the `Brewfile`
 3. Copies configurations to `$HOME`, backing up anything it overwrites
+4. Installs the tools in `mise/config.toml` (`mise install`): node, terraform,
+   and global npm CLIs. If it fails (e.g. offline), setup warns and carries on;
+   rerun `mise install` later
 
-`setup.sh` does not install mise-managed tools. After it finishes, run
-`mise install` (and again whenever `mise/config.toml` gains a tool), then open a
-new terminal. This is where `terraform` comes from; the Brewfile no longer
-installs it.
+Open a new terminal afterwards. Install global CLIs with
+`mise use -g npm:<pkg>`, not `npm install -g`. That records them in
+`~/.config/mise/config.toml` (copy the line into `mise/config.toml` to keep it),
+and they stay available whichever Node version is active.
 
 ### Backups & Restore
 

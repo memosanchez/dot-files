@@ -258,6 +258,16 @@ for entry in "${sync_manifest[@]}"; do
   fi
 done
 
+# Install what the just-synced mise config lists (node, terraform, global npm
+# CLIs). A failed download is transient and leaves synced config intact, so
+# warn and keep going rather than skip the signing setup below.
+if command -v mise &>/dev/null; then
+  echo "🧰 Installing mise tools..."
+  mise install || echo "⚠️  mise install failed. Rerun \`mise install\` once you're back online."
+else
+  echo "⚠️  mise not found; skipping tool install. Is the Brewfile installed?"
+fi
+
 echo "🔏 Configuring local commit-signature verification..."
 # Everything signing-related is machine-local: signing keys differ per
 # machine, so none of it is tracked in this repo. The script exits 0 without

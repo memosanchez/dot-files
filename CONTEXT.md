@@ -30,7 +30,8 @@ _Avoid_: skills copy
 
 **Machine-local**:
 Config that lives only on one machine and is never tracked in the repo
-(`~/.gitconfig.local`, `~/.zshrc.local`, `allowed_signers`). Setup may write
+(`~/.gitconfig.local`, `~/.zshrc.local`, `allowed_signers`,
+`~/.config/mise/config.toml`). Setup may write
 to it, but its contents never flow back into tracked files.
 _Avoid_: local override (ambiguous with `settings.local.json`)
 
@@ -55,9 +56,8 @@ _Avoid_: update, bump
 
 **mise tool**:
 A runtime or CLI whose version matters per directory (node, terraform) or that
-must survive switching runtimes (global npm CLIs). Declared in
-`mise/config.toml`; a repo's `.nvmrc` or `.terraform-version` overrides the
-default there.
+must survive switching runtimes (global npm CLIs). Shared ones are declared in
+`mise/conf.d/dotfiles.toml`.
 _Avoid_: global npm package (those live inside one Node version)
 
 **Brewfile package**:

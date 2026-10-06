@@ -73,8 +73,7 @@ export PNPM_HOME="$HOME/Library/pnpm"
 path_prepend "$PNPM_HOME"
 path_prepend "$PNPM_HOME/bin"
 
-## mise version manager (re-prepends its tool paths on each prompt, per directory;
-## .zprofile puts its shims on PATH for git hooks, IDEs, and other non-interactive shells)
+## mise version manager (re-prepends its tool paths on each prompt, per directory)
 if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
 fi

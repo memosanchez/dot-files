@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
     claude/ → ~/.claude, mise/ → ~/.config/mise) using rsync, backing up overwritten files to
     ~/.dotfiles-backup/<timestamp>/
   - Flattens claude/skills/<category>/<skill>/ to ~/.claude/skills/<skill>/
-  - Runs `mise install` for the tools in mise/config.toml (warns and continues
+  - Runs `mise install` for the tools in mise/conf.d/dotfiles.toml (warns and continues
     on failure)
   - Configures SSH commit-signature verification via scripts/configure-signing.sh
     (machine-local; see README "Commit Signature Verification")

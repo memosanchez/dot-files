@@ -18,6 +18,11 @@ The `setup.sh` script handles the installation process:
 2. Installs Homebrew packages from the `Brewfile`
 3. Copies configurations to `$HOME`, backing up anything it overwrites
 
+`setup.sh` does not install mise-managed tools. After it finishes, run
+`mise install` (and again whenever `mise/config.toml` gains a tool), then open a
+new terminal. This is where `terraform` comes from; the Brewfile no longer
+installs it.
+
 ### Backups & Restore
 
 Every run writes the files it overwrites to `~/.dotfiles-backup/<timestamp>/`,
@@ -37,6 +42,7 @@ of any backup set, so a restore does not remove them.
 - `shell/` - Shell configuration files (zsh)
 - `git/` - Git configuration files
 - `claude/` - Claude Code configuration files
+- `mise/` - Global mise config (tool versions, `.terraform-version` support)
 - `scripts/` - Helper scripts called by `setup.sh`
 - `tests/` - Fixture-based tests for the helper scripts and the `git gone` alias
 - `docs/adr/` - Architecture decision records

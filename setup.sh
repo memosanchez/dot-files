@@ -22,6 +22,7 @@ sync_manifest=(
   "shell:$HOME"
   "git:$HOME"
   "claude:$HOME/.claude"
+  "mise:$HOME/.config/mise"
 )
 
 backup_root="$HOME/.dotfiles-backup"

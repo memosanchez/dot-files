@@ -1,0 +1,10 @@
+# Global mise config, synced to ~/.config/mise/config.toml by setup.sh.
+
+[settings]
+# Honour .terraform-version files (off by default in mise), so repos that pin
+# Terraform that way get their version without a mise.toml of their own.
+idiomatic_version_file_enable_tools = ["terraform"]
+
+[tools]
+# Default outside any repo that pins a version.
+terraform = "latest"

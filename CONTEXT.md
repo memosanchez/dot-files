@@ -30,7 +30,8 @@ _Avoid_: skills copy
 
 **Machine-local**:
 Config that lives only on one machine and is never tracked in the repo
-(`~/.gitconfig.local`, `~/.zshrc.local`, `allowed_signers`). Setup may write
+(`~/.gitconfig.local`, `~/.zshrc.local`, `allowed_signers`,
+`~/.config/mise/config.toml`). Setup may write
 to it, but its contents never flow back into tracked files.
 _Avoid_: local override (ambiguous with `settings.local.json`)
 
@@ -52,6 +53,17 @@ The periodic merge that brings vendored skills up to the latest
 mattpocock/skills release while re-applying our local edits. See
 `docs/adr/0002` for why we vendor instead of subscribing to the plugin.
 _Avoid_: update, bump
+
+**mise tool**:
+A runtime or CLI whose version matters per directory (node, terraform) or that
+must survive switching runtimes (global npm CLIs). Shared ones are declared in
+`mise/conf.d/dotfiles.toml`.
+_Avoid_: global npm package (those live inside one Node version)
+
+**Brewfile package**:
+A machine-wide tool with one unversioned install, always Homebrew's current
+release (`gh`, `jq`, `gcloud`). Anything a repo pins belongs in mise instead.
+_Avoid_: dependency
 
 ## Example dialogue
 

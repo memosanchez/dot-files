@@ -1,0 +1,19 @@
+# Shared global mise config, synced to ~/.config/mise/conf.d/ by setup.sh.
+# ~/.config/mise/config.toml stays machine-local (it's where `mise use -g`
+# writes) and overrides anything here.
+
+[settings]
+# Honour .terraform-version and .nvmrc files (off by default in mise), so repos
+# that pin versions that way get them without a mise.toml of their own.
+idiomatic_version_file_enable_tools = ["terraform", "node"]
+
+[tools]
+# Defaults outside any repo that pins a version.
+terraform = "latest"
+node = "lts"
+
+# Global CLIs. Each installs into its own directory, independent of the active
+# Node version, so switching Node never hides them.
+"npm:typescript" = "latest"
+"npm:@posthog/cli" = "latest"
+"npm:@hubspot/cli" = "latest"

@@ -1,8 +1,8 @@
 # Brewfile - Homebrew packages for this machine
 # Install with: brew bundle --file=Brewfile --no-lock
 
-# Polyglot dev tool manager (runtimes, env vars, task runner); also supplies terraform
-# Referenced in: shell/.zshrc (mise activate)
+# Polyglot dev tool manager; supplies node, terraform, and global npm CLIs
+# Referenced in: shell/.zshrc (mise activate), shell/.zprofile (shims), setup.sh (mise install)
 brew "mise"
 
 # Pretty, minimal, and fast ZSH prompt

@@ -136,7 +136,7 @@ description: One-line summary Claude uses to decide when this skill applies. Be 
 Instructions for Claude go here as plain Markdown.
 ```
 
-Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-10-05, v1.3.1), with three local adaptations: the setup skill is de-branded to `setup-skills`, Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`), and upstream's `code-review` is adopted as `two-axis-review` with narrowed triggers — its upstream name shadows Claude Code's built-in `/code-review` in the CLI (see mattpocock/skills#483). `confirm-findings`, `pre-commit-check`, and `standup` are original to this repo. Upstream's `ask-matt` router and its `misc/` and `in-progress/` buckets are deliberately skipped; see `docs/adr/0002` for the vendoring model.
+Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-10-05, v1.3.1), with three local edits: the setup skill is de-branded to `setup-skills`, Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`), and upstream's `code-review` is adopted as `two-axis-review` with narrowed triggers — its upstream name shadows Claude Code's built-in `/code-review` in the CLI (see mattpocock/skills#483). `confirm-findings`, `pre-commit-check`, and `standup` are original to this repo. Upstream's `ask-matt` router and its `misc/` and `in-progress/` buckets are deliberately skipped; see `docs/adr/0002` for the vendoring model.
 
 Skills currently in this repo:
 

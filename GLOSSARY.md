@@ -50,8 +50,7 @@ _Avoid_: plugin skill, third-party skill
 
 **Local edit**:
 A deliberate change this repo carries on top of a vendored skill's upstream
-text, such as the `setup-skills` rename or Linear tracker support. Every
-upstream sync re-applies it.
+text, such as the `setup-skills` rename or Linear tracker support.
 _Avoid_: bump, customization, tweak
 
 **Upstream sync**:

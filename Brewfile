@@ -2,7 +2,7 @@
 # Install with: brew bundle --file=Brewfile --no-lock
 
 # Polyglot dev tool manager (runtimes, env vars, task runner); also supplies terraform
-# Referenced in: shell/.zshrc (mise activate), mise/config.toml
+# Referenced in: shell/.zshrc (mise activate)
 brew "mise"
 
 # Pretty, minimal, and fast ZSH prompt

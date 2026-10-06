@@ -3,7 +3,7 @@
 This directory contains Claude Code configuration files that are synced to `~/.claude/` by the `setup.sh` script.
 
 **Created:** 2025-10-01
-**Last Modified:** 2026-07-13
+**Last Modified:** 2026-10-05
 
 ## Files
 
@@ -136,7 +136,7 @@ description: One-line summary Claude uses to decide when this skill applies. Be 
 Instructions for Claude go here as plain Markdown.
 ```
 
-Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-08-06, v1.2.3), with three local adaptations: the setup skill is de-branded to `setup-skills`, Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`), and upstream's `code-review` is adopted as `two-axis-review` with narrowed triggers — its upstream name shadows Claude Code's built-in `/code-review` in the CLI (see mattpocock/skills#483). `confirm-findings`, `pre-commit-check`, and `standup` are original to this repo. Upstream's `ask-matt` router and `misc/` bucket are deliberately skipped; see `docs/adr/0002` for the vendoring model.
+Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-10-05, v1.3.1), with three local edits: the setup skill is de-branded to `setup-skills`, Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`), and upstream's `code-review` is adopted as `two-axis-review` with narrowed triggers — its upstream name shadows Claude Code's built-in `/code-review` in the CLI (see mattpocock/skills#483). `confirm-findings`, `pre-commit-check`, and `standup` are original to this repo. Upstream's `ask-matt` router and its `misc/` and `in-progress/` buckets are deliberately skipped; see `docs/adr/0002` for the vendoring model.
 
 Skills currently in this repo:
 
@@ -155,14 +155,16 @@ Skills currently in this repo:
 - `codebase-design` — shared deep-module vocabulary and principles (with `DEEPENING.md`, `DESIGN-IT-TWICE.md`)
 - `confirm-findings` — re-verify a review's findings against actual file lines before acting on them
 - `diagnosing-bugs` — disciplined diagnosis loop: feedback loop → reproduce + minimise → hypothesise → instrument → fix
-- `domain-modeling` — build/sharpen the domain model; updates `CONTEXT.md` and ADRs inline
+- `domain-modeling` — build/sharpen the domain model; updates `GLOSSARY.md` and ADRs inline
 - `grill-with-docs` — grilling session that also maintains the domain docs
-- `implement` — implement a spec or tickets via `/tdd` at pre-agreed seams
+- `implement` — implement a spec or tickets via `/tdd` at pre-agreed seams, one ticket per session
+- `implement-spec` — implement a whole spec in one run: implementer subagents in their own worktrees work the ready tickets, merged onto one integration branch, then `/two-axis-review`
 - `improve-codebase-architecture` — scan for deepening opportunities, present as an HTML report, grill through picks
+- `pr` — write a PR body: Summary diagram, before/after Evidence, Merge Danger (model-invoked)
 - `pre-commit-check` — run lint/typecheck/test/build as a pre-commit gate (auto-detects package manager)
 - `prototype` — throwaway prototype to answer a design question (single shareable HTML file or UI variants)
 - `research` — investigate a question against primary sources, capture findings as a Markdown file in the repo
-- `resolving-merge-conflicts` — resolve an in-progress git merge/rebase conflict
+- `retro` — review a session and suggest changes to the agent's environment (checks, coding standards, CLAUDE.md)
 - `tdd` — red → green loop with seams, anti-patterns, and loop rules
 - `to-spec` — synthesize the conversation into a spec and publish to the configured tracker
 - `to-tickets` — break a plan/spec into tracer-bullet tickets with native blocking edges
@@ -187,9 +189,9 @@ claude/
     │   └── teach/  to-questionnaire/  wait-what/  writing-for-agents/
     └── engineering/
         ├── codebase-design/  confirm-findings/  diagnosing-bugs/
-        ├── domain-modeling/  grill-with-docs/  implement/
-        ├── improve-codebase-architecture/  pre-commit-check/  prototype/
-        ├── research/  resolving-merge-conflicts/  tdd/  to-spec/
+        ├── domain-modeling/  grill-with-docs/  implement/  implement-spec/
+        ├── improve-codebase-architecture/  pr/  pre-commit-check/
+        ├── prototype/  research/  retro/  tdd/  to-spec/
         └── to-tickets/  triage/  two-axis-review/  wayfinder/  wizard/
 ```
 

@@ -161,8 +161,10 @@ sync_skills() {
   # Warn about live skills the repo doesn't know about. Sync never deletes,
   # so renaming a skill in the repo leaves the old copy behind in
   # <destination>/skills — and that stale copy stays model-invocable.
+  # Only folders holding a SKILL.md are skills; Claude Code keeps its own
+  # account-synced skills in a synced/ container here, which isn't stale.
   for live_skill_dir in "$destination"/skills/*/; do
-    [ -d "$live_skill_dir" ] || continue
+    [ -f "${live_skill_dir}SKILL.md" ] || continue
     skill_name="$(basename "$live_skill_dir")"
     if ! find "$name/skills" -mindepth 2 -maxdepth 2 -type d -name "$skill_name" | grep -q .; then
       echo "⚠️  $destination/skills/$skill_name is not in this repo (stale rename or third-party install) — consider deleting it"

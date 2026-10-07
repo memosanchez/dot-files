@@ -1,170 +1,42 @@
 ---
 name: pr
 description: "Use when writing a PR body."
-metadata:
-  credits:
-    skill: show-me
-    author: Dex Horthy
-    organisation: Humanlayer
-    url: "https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md"
 ---
 
-Use this template for writing the PR body:
+Write the PR body to this template:
 
 ```markdown
 ## Summary
 
-<diagram, diff-sketch, or tree>
+- <what changed and why: 1–3 bullets>
 
-## Evidence
+## Test plan
 
-- **Before:** <screenshot/output/failing test run>
-  **After:** <screenshot/output/passing test run>
-
-## Merge Danger
-
-**Door:** <one-way or two-way>
-
-<optional: description>
-
-**Blast Radius:** <one-word description>
-
-<optional: potential ramifications of merge>
+- [ ] <a step the reviewer performs by hand>
 ```
 
-## Sections
+Write in the user's domain language from `GLOSSARY.md`, with no preamble. The reviewer reads the actual diff in GitHub's Files Changed tab, so the body carries what the diff can't show.
 
-Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
+## Summary
 
-### Summary
+Lead each bullet with the _why_: the motivation, the constraint, the reason a line stays or goes. Name the change itself in a few words; the diff holds the detail.
 
-Pick the smallest view that makes the key point clear.
-
-- Show logic or an algorithm as pseudocode:
-
-```text
-on(save)
-  if content is unchanged
-    return cached result
-  write new content
-  return fresh result
-```
-
-- Show runtime control flow as a call tree:
+When the change is **structural** (a flow rewired across files, a refactor that moves responsibility, new UI composition), add the smallest view that shows the new shape, right under the bullet it supports: a call tree, a component tree, a shallow file tree, or a Mermaid diagram.
 
 ```text
 submitForm
   createSession
     persistPrompt
-    launchAgent
+    expandSkillMention   # new
   navigateToSession
 ```
 
-- Show UI structure as a component tree, including state and module boundaries that matter:
+## Test plan
 
-```text
-<SessionPage> (apps/example/src/routes/session.tsx)
-  useSessionEvents()
-  <SessionToolbar>
-    <RunSkillButton> (packages/ui)
-```
+List only manual checks a reviewer performs by hand: the behaviour to try, the edge case to poke. CI and hooks already prove lint, types, tests, and build.
 
-- Show file responsibility or a broad refactor as a shallow file tree:
+For a **visual** change, add before/after screenshots when the environment can capture them.
 
-```text
-src/
-├── commands/       # parses user actions
-├── sessions/       # owns session state
-└── transport/      # sends API requests
-```
+## Risk
 
-- Show component interaction, control flow, or data flow with Mermaid:
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant UI
-    participant Daemon
-    User->>UI: choose command
-    UI->>Daemon: send expanded prompt
-    Daemon-->>UI: stream result
-```
-
-- Use `diff` when the point is what changes and the surrounding shape already exists. Match the diff shape to the topic.
-
-For a component change:
-
-```diff
- <SessionPage>
-   useSessionEvents()
-   <SessionToolbar>
-+    <RunSkillButton />
-   <SessionTimeline>
-+    <SkillResultCard />
-```
-
-For a file-layout change:
-
-```diff
- src/
- ├── commands/
-+│   └── show-me.ts       # expands the slash command
- ├── sessions/
--└── transport.ts
-+└── transport/
-+    ├── client.ts
-+    └── stream.ts
-```
-
-For a call-tree or call-stack change:
-
-```diff
- submitForm
-   createSession
-     persistPrompt
-+    expandSkillMention
-     launchAgent
--  navigateToSession
-+  navigateToSession
-+    subscribeToEvents
-```
-
-For a state or control-flow change:
-
-```diff
- on(save)
--  write content
-+  if content is unchanged
-+    return cached result
-+  write new content
-+  invalidate cache
-```
-
-- Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
-
-```ts
-function expandSkill(command: string): string {
-  const skillName = command.slice(1);
-  return `use the ${skillName} skill`;
-}
-```
-
-#### Guidance
-
-Place each visual next to the short text it supports. Keep only the calls, files, props, states, and boundaries needed to answer the user's current question or the options to resolve the current discussion point.
-
-You may use one of these, you may use several, it is unlikely you will use all of them. Use your judgement and don't overwhelm the user.
-
-### Evidence
-
-Concrete evidence that the change works. Show a before and after.
-
-Screenshots are S-tier - when the environment is set up for it and the change is visual.
-
-Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
-
-### Merge Danger
-
-Describe whether it's a one-way or two-way door. You can walk back through two-way doors, but not one-way doors. A PR that is cheap to roll back is lower risk. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors.
-
-The blast radius is the potential impact or scope of the changes introduced by this PR. Consider all possibilities. Examples are layout shift, breakages for consumers, mobile responsiveness, etc.
+Add a `## Risk` section only for a **one-way door**: a change that is hard to walk back, such as a data migration, a deletion, a public API or contract change, or config other systems depend on. Say what breaks if the change is wrong and how to recover.

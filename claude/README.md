@@ -136,7 +136,7 @@ description: One-line summary Claude uses to decide when this skill applies. Be 
 Instructions for Claude go here as plain Markdown.
 ```
 
-Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-10-05, v1.3.1), with three local edits: the setup skill is de-branded to `setup-skills`, Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`), and upstream's `code-review` is adopted as `two-axis-review` with narrowed triggers — its upstream name shadows Claude Code's built-in `/code-review` in the CLI (see mattpocock/skills#483). `confirm-findings`, `pre-commit-check`, and `standup` are original to this repo. Upstream's `ask-matt` router and its `misc/` and `in-progress/` buckets are deliberately skipped; see `docs/adr/0002` for the vendoring model.
+Most skills here track [Matt Pocock's skills repo](https://github.com/mattpocock/skills) (last synced 2026-10-05, v1.3.1), with three local edits: the setup skill is de-branded to `setup-skills`, Linear is a first-class issue tracker option (`setup-skills/issue-tracker-linear.md`), and upstream's `code-review` is adopted as `two-axis-review` with narrowed triggers — its upstream name shadows Claude Code's built-in `/code-review` in the CLI (see mattpocock/skills#483). `confirm-findings`, `pr`, `pre-commit-check`, and `standup` are original to this repo. Upstream's `ask-matt` router, its `pr` skill (replaced by ours), and its `misc/` and `in-progress/` buckets are deliberately skipped; see `docs/adr/0002` for the vendoring model.
 
 Skills currently in this repo:
 
@@ -160,7 +160,7 @@ Skills currently in this repo:
 - `implement` — implement a spec or tickets via `/tdd` at pre-agreed seams, one ticket per session
 - `implement-spec` — implement a whole spec in one run: implementer subagents in their own worktrees work the ready tickets, merged onto one integration branch, then `/two-axis-review`
 - `improve-codebase-architecture` — scan for deepening opportunities, present as an HTML report, grill through picks
-- `pr` — write a PR body: Summary diagram, before/after Evidence, Merge Danger (model-invoked)
+- `pr` — write a PR body: why-first Summary and a manual Test plan, with a structural view, screenshots, or a Risk section only when the change calls for one (model-invoked)
 - `pre-commit-check` — run lint/typecheck/test/build as a pre-commit gate (auto-detects package manager)
 - `prototype` — throwaway prototype to answer a design question (single shareable HTML file or UI variants)
 - `research` — investigate a question against primary sources, capture findings as a Markdown file in the repo

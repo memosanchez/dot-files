@@ -13,5 +13,10 @@ The cost is a manual upstream sync per release: a three-way merge against
 the upstream version last synced from, re-applying the local edits above.
 Blob-matching files against upstream git history separates local edits from
 staleness. Codex metadata (`agents/` dirs) is stripped on vendoring; the
-`ask-matt` router and the `misc/` and `in-progress/` buckets are
-deliberately not vendored.
+`ask-matt` router, the `misc/` and `in-progress/` buckets, and `pr`
+(replaced by our own, 2026-10-06) are deliberately not vendored.
+A replaced skill still gets a look on every sync: diff upstream's `pr`
+against the release last reviewed (v1.3.1, the version ours replaced), and
+when it changed, summarise the changes and ask the user which, if any, to
+fold into ours; then record the new release here as last reviewed. The
+other skips stay silent.

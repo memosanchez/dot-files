@@ -1,42 +1,122 @@
 ---
 name: pr
 description: "Use when writing a PR body."
+metadata:
+  credits:
+    skill: show-me
+    author: Dex Horthy
+    organisation: Humanlayer
+    url: "https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md"
 ---
 
-Write the PR body to this template:
+Use this template for writing the PR body:
 
 ```markdown
 ## Summary
 
-- <what changed and why: 1–3 bullets>
+<diagram or tree>
 
-## Test plan
+## Evidence
 
-- [ ] <a step the reviewer performs by hand>
+- **Before:** <screenshot/output/failing test run>
+  **After:** <screenshot/output/passing test run>
+
+## Merge Danger
+
+<only for a one-way door; omit the section otherwise>
+
+**Door:** one-way
+
+<optional: description>
+
+**Blast Radius:** <one-word description>
+
+<optional: potential ramifications of merge>
 ```
 
-Write in the user's domain language from `GLOSSARY.md`, with no preamble. The reviewer reads the actual diff in GitHub's Files Changed tab, so the body carries what the diff can't show.
+## Sections
 
-## Summary
+Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
 
-Lead each bullet with the _why_: the motivation, the constraint, the reason a line stays or goes. Name the change itself in a few words; the diff holds the detail.
+### Summary
 
-When the change is **structural** (a flow rewired across files, a refactor that moves responsibility, new UI composition), add the smallest view that shows the new shape, right under the bullet it supports: a call tree, a component tree, a shallow file tree, or a Mermaid diagram.
+Pick the smallest view that makes the key point clear.
+
+- Show logic or an algorithm as pseudocode:
+
+```text
+on(save)
+  if content is unchanged
+    return cached result
+  write new content
+  return fresh result
+```
+
+- Show runtime control flow as a call tree:
 
 ```text
 submitForm
   createSession
     persistPrompt
-    expandSkillMention   # new
+    launchAgent
   navigateToSession
 ```
 
-## Test plan
+- Show UI structure as a component tree, including state and module boundaries that matter:
 
-List only manual checks a reviewer performs by hand: the behaviour to try, the edge case to poke. CI and hooks already prove lint, types, tests, and build.
+```text
+<SessionPage> (apps/example/src/routes/session.tsx)
+  useSessionEvents()
+  <SessionToolbar>
+    <RunSkillButton> (packages/ui)
+```
 
-For a **visual** change, add before/after screenshots when the environment can capture them.
+- Show file responsibility or a broad refactor as a shallow file tree:
 
-## Risk
+```text
+src/
+├── commands/       # parses user actions
+├── sessions/       # owns session state
+└── transport/      # sends API requests
+```
 
-Add a `## Risk` section only for a **one-way door**: a change that is hard to walk back, such as a data migration, a deletion, a public API or contract change, or config other systems depend on. Say what breaks if the change is wrong and how to recover.
+- Show component interaction, control flow, or data flow with Mermaid:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI
+    participant Daemon
+    User->>UI: choose command
+    UI->>Daemon: send expanded prompt
+    Daemon-->>UI: stream result
+```
+
+- Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
+
+```ts
+function expandSkill(command: string): string {
+  const skillName = command.slice(1);
+  return `use the ${skillName} skill`;
+}
+```
+
+#### Guidance
+
+Place each visual next to the short text it supports. Keep only the calls, files, props, states, and boundaries needed to answer the user's current question or the options to resolve the current discussion point.
+
+You may use one of these, you may use several, it is unlikely you will use all of them. Use your judgement and don't overwhelm the user.
+
+### Evidence
+
+Concrete evidence that the change works. Show a before and after.
+
+Screenshots are S-tier - when the environment is set up for it and the change is visual.
+
+Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
+
+### Merge Danger
+
+Include this section only when the PR is a one-way door. You can walk back through two-way doors, but not one-way doors. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors. A PR that is cheap to roll back is a two-way door: leave Merge Danger out of the body entirely.
+
+The blast radius is the potential impact or scope of the changes introduced by this PR. Consider all possibilities. Examples are layout shift, breakages for consumers, mobile responsiveness, etc.

@@ -5,10 +5,11 @@ plugin that auto-updates. We stay on vendored copies in `claude/skills/`
 instead (decided 2026-08-06): this repo carries purposeful local edits the
 plugin cannot hold — Linear issue-tracker support (`issue-tracker-linear.md`
 and its wiring in `setup-skills`), the `setup-matt-pocock-skills` →
-`setup-skills` rename and de-branding (every pointer to it included), and
+`setup-skills` rename and de-branding (every pointer to it included),
 `two-axis-review`, a rename-fork of upstream's `code-review` with narrowed
 triggers that avoids colliding with Claude Code's built-in command (every
-caller re-pointed at it).
+caller re-pointed at it), and `pr` with its diff-sketch visuals removed and
+Merge Danger included only for one-way doors.
 The cost is a manual upstream sync per release: a three-way merge against
 the upstream version last synced from, re-applying the local edits above.
 Blob-matching files against upstream git history separates local edits from

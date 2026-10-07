@@ -14,7 +14,7 @@ Use this template for writing the PR body:
 ```markdown
 ## Summary
 
-<diagram, diff-sketch, or tree>
+<diagram or tree>
 
 ## Evidence
 
@@ -23,7 +23,9 @@ Use this template for writing the PR body:
 
 ## Merge Danger
 
-**Door:** <one-way or two-way>
+<only for a one-way door; omit the section otherwise>
+
+**Door:** one-way
 
 <optional: description>
 
@@ -90,56 +92,6 @@ sequenceDiagram
     Daemon-->>UI: stream result
 ```
 
-- Use `diff` when the point is what changes and the surrounding shape already exists. Match the diff shape to the topic.
-
-For a component change:
-
-```diff
- <SessionPage>
-   useSessionEvents()
-   <SessionToolbar>
-+    <RunSkillButton />
-   <SessionTimeline>
-+    <SkillResultCard />
-```
-
-For a file-layout change:
-
-```diff
- src/
- ├── commands/
-+│   └── show-me.ts       # expands the slash command
- ├── sessions/
--└── transport.ts
-+└── transport/
-+    ├── client.ts
-+    └── stream.ts
-```
-
-For a call-tree or call-stack change:
-
-```diff
- submitForm
-   createSession
-     persistPrompt
-+    expandSkillMention
-     launchAgent
--  navigateToSession
-+  navigateToSession
-+    subscribeToEvents
-```
-
-For a state or control-flow change:
-
-```diff
- on(save)
--  write content
-+  if content is unchanged
-+    return cached result
-+  write new content
-+  invalidate cache
-```
-
 - Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
 
 ```ts
@@ -165,6 +117,6 @@ Execution-based evidence is A-tier. Test results, console output. Show the exact
 
 ### Merge Danger
 
-Describe whether it's a one-way or two-way door. You can walk back through two-way doors, but not one-way doors. A PR that is cheap to roll back is lower risk. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors.
+Include this section only when the PR is a one-way door. You can walk back through two-way doors, but not one-way doors. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors. A PR that is cheap to roll back is a two-way door: leave Merge Danger out of the body entirely.
 
 The blast radius is the potential impact or scope of the changes introduced by this PR. Consider all possibilities. Examples are layout shift, breakages for consumers, mobile responsiveness, etc.

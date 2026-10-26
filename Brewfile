@@ -1,5 +1,5 @@
 # Brewfile - Homebrew packages for this machine
-# Install with: brew bundle --file=Brewfile --no-lock
+# Install with: brew bundle --file=Brewfile
 
 # Polyglot dev tool manager; supplies node, terraform, and global npm CLIs
 # Referenced in: shell/.zshrc (mise activate), shell/.zprofile (shims), setup.sh (mise install)
@@ -8,9 +8,6 @@ brew "mise"
 # Pretty, minimal, and fast ZSH prompt
 # Referenced in: shell/.zshrc (prompt pure)
 brew "pure"
-
-# GNU Privacy Guard - encryption and signing tools
-brew "gnupg"
 
 # PostgreSQL client tools without the full server
 # Referenced in: shell/.zshrc (libpq PATH)
@@ -48,9 +45,6 @@ brew "awscli"
 
 # Google Cloud SQL Auth Proxy
 brew "cloud-sql-proxy"
-
-# Vercel deployment CLI
-brew "vercel-cli"
 
 # Monospaced font with programming ligatures
 cask "font-fira-code"

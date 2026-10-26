@@ -228,12 +228,12 @@ if ! command -v brew &>/dev/null; then
 fi
 
 ## Install packages from Brewfile
+# One failed package (often one Homebrew renamed or removed) shouldn't block
+# the config sync, so warn and keep going.
 if command -v brew &>/dev/null; then
   echo "🍺 Installing Homebrew packages from Brewfile..."
-  brew bundle --file="${script_directory}/Brewfile" || {
-    echo "❌ Homebrew package installation failed. Try running 'brew doctor' for diagnostics."
-    exit 1
-  }
+  brew bundle --file="${script_directory}/Brewfile" \
+    || echo "⚠️  brew bundle failed. Check \`brew doctor\`, then rerun \`brew bundle --file=${script_directory}/Brewfile\`."
 else
   echo "⚠️  Homebrew is not available. Skipping package installation."
   echo "   Install manually: https://brew.sh"

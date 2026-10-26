@@ -230,10 +230,8 @@ fi
 ## Install packages from Brewfile
 if command -v brew &>/dev/null; then
   echo "🍺 Installing Homebrew packages from Brewfile..."
-  brew bundle --file="${script_directory}/Brewfile" || {
-    echo "❌ Homebrew package installation failed. Try running 'brew doctor' for diagnostics."
-    exit 1
-  }
+  brew bundle --file="${script_directory}/Brewfile" \
+    || echo "⚠️  brew bundle failed; continuing. Try running 'brew doctor' for diagnostics."
 else
   echo "⚠️  Homebrew is not available. Skipping package installation."
   echo "   Install manually: https://brew.sh"

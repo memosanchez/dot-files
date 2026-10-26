@@ -231,7 +231,7 @@ fi
 if command -v brew &>/dev/null; then
   echo "🍺 Installing Homebrew packages from Brewfile..."
   brew bundle --file="${script_directory}/Brewfile" \
-    || echo "⚠️  brew bundle failed; continuing. Try running 'brew doctor' for diagnostics."
+    || echo "⚠️  brew bundle failed. Rerun \`brew bundle\` after checking 'brew doctor'."
 else
   echo "⚠️  Homebrew is not available. Skipping package installation."
   echo "   Install manually: https://brew.sh"

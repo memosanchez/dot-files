@@ -72,7 +72,7 @@
         --jq '.[] | .number, .headRefOid' </dev/null) \
         || { echo \"Kept $branch: couldn't check PR\"; continue; }; \
       [ -n \"$prs\" ] || { echo \"Kept $branch: no merged PR\"; continue; }; \
-      covered=; missed=; unfetched=; \
+      covered=; missed_pr=; unfetched=; \
       set -- $prs; \
       while [ $# -gt 0 ]; do \
         number=$1; pr_head=$2; shift 2; \
@@ -80,13 +80,13 @@
           || git fetch -q \"$remote\" \"$pr_head\" 2>/dev/null \
           || { unfetched=1; continue; }; \
         git merge-base --is-ancestor \"$sha\" \"$pr_head\" && { covered=1; break; }; \
-        missed=${missed:-$number}; \
+        missed_pr=${missed_pr:-$number}; \
       done; \
       if [ -z \"$covered\" ]; then \
         if [ -n \"$unfetched\" ]; then \
           echo \"Kept $branch: couldn't fetch PR head\"; \
         else \
-          echo \"Kept $branch: commits not in merged PR #$missed\"; \
+          echo \"Kept $branch: commits not in merged PR #$missed_pr\"; \
         fi; \
         continue; \
       fi; \

@@ -106,17 +106,11 @@ finish_pr() {
   git -C "$fixture/origin.git" branch -q -D "$branch"
 }
 
-# A second clone that changes origin the way GitHub or another machine does,
-# so the commits it pushes never reach $repo
-remote_clone() {
-  [ -d "$fixture/remote" ] || git clone -q "$fixture/origin.git" "$fixture/remote" 2>/dev/null
-}
-
 # GitHub's "Update branch" button: a commit lands on main, then main is merged
-# into the PR branch on origin
+# into the PR branch on origin. It happens in a second clone, so none of these
+# commits reach $repo
 update_branch_on_github() {
-  remote_clone
-  git -C "$fixture/remote" pull -q origin main
+  git clone -q "$fixture/origin.git" "$fixture/remote" 2>/dev/null
   echo "$1" >> "$fixture/remote/main.txt"
   git -C "$fixture/remote" add main.txt
   git -C "$fixture/remote" commit -q -m "on main"
@@ -207,6 +201,15 @@ update_branch_on_github feature
 finish_pr merged feature
 run_gone "$repo"
 assert_equals "deleted" "$(branch_state feature)" "fetches the PR head and deletes the branch it contains"
+
+echo "— several merged PRs from the same branch name —"
+new_fixture
+merged_worktree feature
+git -C "$fixture/wt-feature" commit -q --allow-empty -m "after merge"
+echo "feature merged $(git -C "$repo" rev-parse main)" >> "$GH_PRS"
+run_gone "$repo"
+assert_kept feature
+assert_line "Kept feature: commits not in merged PR #2" "names the newest merged PR"
 
 echo "— local commits that diverged from an updated PR head —"
 new_fixture

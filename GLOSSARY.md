@@ -70,6 +70,19 @@ A machine-wide tool with one unversioned install, always Homebrew's current
 release (`gh`, `jq`, `gcloud`). Anything a repo pins belongs in mise instead.
 _Avoid_: dependency
 
+**Gone branch**:
+A local branch whose upstream branch was deleted on the remote, usually
+because its PR merged or closed. `git gone` decides which of these to delete.
+_Avoid_: stale branch, dead branch
+
+**Covered by a merged PR**:
+A gone branch whose local tip is already contained in the head of a merged
+PR for that branch, so deleting it loses no work. That includes a PR head that
+GitHub's "Update branch" moved past the local tip. The only condition under
+which `git gone` deletes a branch.
+_Avoid_: merged (suggests `git branch -d`, which squash and merge-commit PRs
+defeat)
+
 ## Example dialogue
 
 > **Dev:** Where do I add a new synced directory?

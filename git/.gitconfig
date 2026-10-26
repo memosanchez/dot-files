@@ -37,7 +37,11 @@
   uncommit = reset --soft HEAD~1
 
   # Delete local branches whose upstream is gone, but only when GitHub shows a
-  # merged PR at the branch's tip; without gh, or offline, nothing is deleted.
+  # merged PR whose head contains the branch's tip, including a PR head that
+  # GitHub's "Update branch" merged main into after the last local fetch. A PR
+  # head not already local is fetched by SHA. Rebased or rewritten PR heads
+  # don't count, so those branches are kept. Without gh, or offline, nothing
+  # is deleted.
   # A linked worktree holding the branch is removed first. Git keeps dirty or
   # locked worktrees, and the current and main worktrees are skipped.
   # `git gone -n` prints the commands instead of running them; a real run may
@@ -57,17 +61,35 @@
     git fetch --prune || return; \
     main=$(git worktree list --porcelain | sed -n '1s/^worktree //p'); \
     git for-each-ref --omit-empty \
-      --format='%(if:equals=gone)%(upstream:track,nobracket)%(then)%(if)%(HEAD)%(then)here%(else)-%(end) %(objectname) %(refname:lstrip=2) %(worktreepath)%(end)' \
+      --format='%(if:equals=gone)%(upstream:track,nobracket)%(then)%(if)%(HEAD)%(then)here%(else)-%(end) %(objectname) %(upstream:remotename) %(refname:lstrip=2) %(worktreepath)%(end)' \
       refs/heads | \
-    while read -r head sha branch wt; do \
+    while read -r head sha remote branch wt; do \
       if [ \"$head\" = here ] || [ \"$wt\" = \"$main\" ]; then \
         echo \"Skipped $branch: checked out in $wt\"; \
         continue; \
       fi; \
-      merged=$(GONE_SHA=$sha gh pr list --head \"$branch\" --state merged --json headRefOid \
-        --jq 'any(.[]; .headRefOid == env.GONE_SHA)' </dev/null) \
+      prs=$(gh pr list --head \"$branch\" --state merged --json number,headRefOid \
+        --jq '.[] | .number, .headRefOid' </dev/null) \
         || { echo \"Kept $branch: couldn't check PR\"; continue; }; \
-      [ \"$merged\" = true ] || { echo \"Kept $branch: no merged PR at this commit\"; continue; }; \
+      [ -n \"$prs\" ] || { echo \"Kept $branch: no merged PR\"; continue; }; \
+      covered=; missed=; unfetched=; \
+      set -- $prs; \
+      while [ $# -gt 0 ]; do \
+        number=$1; pr_head=$2; shift 2; \
+        git cat-file -e \"$pr_head^{commit}\" 2>/dev/null \
+          || git fetch -q \"$remote\" \"$pr_head\" 2>/dev/null \
+          || { unfetched=1; continue; }; \
+        git merge-base --is-ancestor \"$sha\" \"$pr_head\" && { covered=1; break; }; \
+        missed=${missed:-$number}; \
+      done; \
+      if [ -z \"$covered\" ]; then \
+        if [ -n \"$unfetched\" ]; then \
+          echo \"Kept $branch: couldn't fetch PR head\"; \
+        else \
+          echo \"Kept $branch: commits not in merged PR #$missed\"; \
+        fi; \
+        continue; \
+      fi; \
       if [ -n \"$wt\" ]; then \
         $run git worktree remove \"$wt\" || { echo \"Kept $branch: $wt was not removed\"; continue; }; \
         [ -n \"$run\" ] || echo \"Removed worktree $wt\"; \

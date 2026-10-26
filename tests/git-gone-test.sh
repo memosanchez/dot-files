@@ -44,7 +44,8 @@ git config -f "$GIT_CONFIG_GLOBAL" alias.gone "$alias_value"
 
 # Stub gh: answers `gh pr list --head <branch> --state <state> --jq <filter>`
 # by running the caller's own filter (with /usr/bin/jq) over the matching PRs
-# in $GH_PRS, one "<branch> <state> <head sha>" line per PR. GH_OFFLINE=1
+# in $GH_PRS, one "<branch> <state> <head sha>" line per PR. A PR's number is
+# its line number, and PRs come newest first, as gh lists them. GH_OFFLINE=1
 # fails every call the way a dropped network does.
 mkdir -p "$test_root/bin"
 cat > "$test_root/bin/gh" <<'STUB'
@@ -61,8 +62,9 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
-awk -v head="$head" -v state="$state" '$1 == head && $2 == state { print $3 }' "$GH_PRS" |
-  jq -Rn '[inputs | {headRefOid: .}]' | jq -r "$filter"
+awk -v head="$head" -v state="$state" '$1 == head && $2 == state { print NR, $3 }' "$GH_PRS" |
+  jq -Rn '[inputs | split(" ") | {number: (.[0] | tonumber), headRefOid: .[1]}] | reverse' |
+  jq -r "$filter"
 STUB
 chmod +x "$test_root/bin/gh"
 export PATH="$test_root/bin:/usr/bin:/bin"
@@ -93,12 +95,36 @@ add_worktree() {
   git -C "$repo" worktree add -q "$fixture/wt-$1" "$1"
 }
 
-# What GitHub does when a PR is merged or closed: record the PR at the
-# branch's current tip, then delete the remote branch
+# What GitHub does when a PR is merged or closed: record the PR at the remote
+# branch's tip, keep that tip reachable under refs/pull/<n>/head, then delete
+# the remote branch
 finish_pr() {
-  local state="$1" branch="$2"
-  echo "$branch $state $(git -C "$repo" rev-parse "refs/heads/$branch")" >> "$GH_PRS"
+  local state="$1" branch="$2" tip
+  tip="$(git -C "$fixture/origin.git" rev-parse "refs/heads/$branch")"
+  echo "$branch $state $tip" >> "$GH_PRS"
+  git -C "$fixture/origin.git" update-ref "refs/pull/$(wc -l < "$GH_PRS" | tr -d ' ')/head" "$tip"
   git -C "$fixture/origin.git" branch -q -D "$branch"
+}
+
+# A second clone that changes origin the way GitHub or another machine does,
+# so the commits it pushes never reach $repo
+remote_clone() {
+  [ -d "$fixture/remote" ] || git clone -q "$fixture/origin.git" "$fixture/remote" 2>/dev/null
+}
+
+# GitHub's "Update branch" button: a commit lands on main, then main is merged
+# into the PR branch on origin
+update_branch_on_github() {
+  remote_clone
+  git -C "$fixture/remote" pull -q origin main
+  echo "$1" >> "$fixture/remote/main.txt"
+  git -C "$fixture/remote" add main.txt
+  git -C "$fixture/remote" commit -q -m "on main"
+  git -C "$fixture/remote" push -q origin main
+  git -C "$fixture/remote" fetch -q origin "$1"
+  git -C "$fixture/remote" switch -q -c "$1" "origin/$1"
+  git -C "$fixture/remote" merge -q --no-edit main
+  git -C "$fixture/remote" push -q origin "$1" 2>/dev/null
 }
 
 # The usual starting point: a branch in its own worktree whose PR merged
@@ -172,7 +198,38 @@ merged_worktree feature
 git -C "$fixture/wt-feature" commit -q --allow-empty -m "after merge"
 run_gone "$repo"
 assert_kept feature
-assert_line "Kept feature: no merged PR at this commit" "says why it kept the branch"
+assert_line "Kept feature: commits not in merged PR #1" "says why it kept the branch"
+
+echo "— PR head moved past the local tip by \"Update branch\" —"
+new_fixture
+push_branch feature
+update_branch_on_github feature
+finish_pr merged feature
+run_gone "$repo"
+assert_equals "deleted" "$(branch_state feature)" "fetches the PR head and deletes the branch it contains"
+
+echo "— local commits that diverged from an updated PR head —"
+new_fixture
+push_branch feature
+update_branch_on_github feature
+finish_pr merged feature
+git -C "$repo" switch -q feature
+echo "unpushed" > "$repo/unpushed.txt"
+git -C "$repo" add unpushed.txt
+git -C "$repo" commit -q -m "unpushed"
+git -C "$repo" switch -q main
+run_gone "$repo"
+assert_equals "present" "$(branch_state feature)" "keeps the branch"
+assert_line "Kept feature: commits not in merged PR #1" "says why it kept the branch"
+
+echo "— merged PR head that cannot be fetched —"
+new_fixture
+push_branch feature
+git -C "$fixture/origin.git" branch -q -D feature
+echo "feature merged 0123456789abcdef0123456789abcdef01234567" >> "$GH_PRS"
+run_gone "$repo"
+assert_equals "present" "$(branch_state feature)" "keeps the branch"
+assert_line "Kept feature: couldn't fetch PR head" "says why it kept the branch"
 
 echo "— PR closed without merging —"
 new_fixture
@@ -181,7 +238,7 @@ add_worktree feature
 finish_pr closed feature
 run_gone "$repo"
 assert_kept feature
-assert_line "Kept feature: no merged PR at this commit" "says why it kept the branch"
+assert_line "Kept feature: no merged PR" "says why it kept the branch"
 
 echo "— gh not installed —"
 new_fixture
@@ -252,7 +309,7 @@ run_gone "$repo" -n
 assert_kept feature
 assert_line "git worktree remove $fixture/wt-feature" "prints the worktree removal"
 assert_line "git branch -D feature" "prints the branch deletion"
-assert_line "Kept unmerged: no merged PR at this commit" "still runs the PR check"
+assert_line "Kept unmerged: no merged PR" "still runs the PR check"
 assert_equals "" "$(output_line "git branch -D unmerged")" "does not list a branch that fails the PR check"
 
 echo "— unknown argument —"

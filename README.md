@@ -17,7 +17,7 @@ The `setup.sh` script handles the installation process:
 1. Updates the repository with the latest changes
 2. Installs Homebrew packages from the `Brewfile`. If one fails (e.g. a
    formula Homebrew renamed), setup warns and carries on; fix the `Brewfile`
-   and rerun `brew bundle`
+   and rerun `brew bundle --file=Brewfile` from the repo
 3. Copies configurations to `$HOME`, backing up anything it overwrites
 4. Installs the tools in `mise/conf.d/dotfiles.toml` (`mise install`): node,
    terraform, and global npm CLIs. If it fails (e.g. offline), setup warns and

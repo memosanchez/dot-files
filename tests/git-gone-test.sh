@@ -102,7 +102,8 @@ finish_pr() {
   local state="$1" branch="$2" tip
   tip="$(git -C "$fixture/origin.git" rev-parse "refs/heads/$branch")"
   echo "$branch $state $tip" >> "$GH_PRS"
-  git -C "$fixture/origin.git" update-ref "refs/pull/$(wc -l < "$GH_PRS" | tr -d ' ')/head" "$tip"
+  # The stub gh numbers each PR by its line in $GH_PRS
+  git -C "$fixture/origin.git" update-ref "refs/pull/$(($(wc -l < "$GH_PRS")))/head" "$tip"
   git -C "$fixture/origin.git" branch -q -D "$branch"
 }
 
@@ -216,13 +217,10 @@ new_fixture
 push_branch feature
 update_branch_on_github feature
 finish_pr merged feature
-git -C "$repo" switch -q feature
-echo "unpushed" > "$repo/unpushed.txt"
-git -C "$repo" add unpushed.txt
-git -C "$repo" commit -q -m "unpushed"
-git -C "$repo" switch -q main
+add_worktree feature
+git -C "$fixture/wt-feature" commit -q --allow-empty -m "unpushed"
 run_gone "$repo"
-assert_equals "present" "$(branch_state feature)" "keeps the branch"
+assert_kept feature
 assert_line "Kept feature: commits not in merged PR #1" "says why it kept the branch"
 
 echo "— merged PR head that cannot be fetched —"

@@ -72,24 +72,17 @@
         --jq '.[] | .number, .headRefOid' </dev/null) \
         || { echo \"Kept $branch: couldn't check PR\"; continue; }; \
       [ -n \"$prs\" ] || { echo \"Kept $branch: no merged PR\"; continue; }; \
-      covered=; missed_pr=; unfetched=; \
+      kept=; \
       set -- $prs; \
       while [ $# -gt 0 ]; do \
         number=$1; pr_head=$2; shift 2; \
         git cat-file -e \"$pr_head^{commit}\" 2>/dev/null \
           || git fetch -q \"$remote\" \"$pr_head\" 2>/dev/null \
-          || { unfetched=1; continue; }; \
-        git merge-base --is-ancestor \"$sha\" \"$pr_head\" && { covered=1; break; }; \
-        missed_pr=${missed_pr:-$number}; \
+          || { kept=\"couldn't fetch PR head\"; continue; }; \
+        git merge-base --is-ancestor \"$sha\" \"$pr_head\" && { kept=; break; }; \
+        kept=${kept:-\"commits not in merged PR #$number\"}; \
       done; \
-      if [ -z \"$covered\" ]; then \
-        if [ -n \"$unfetched\" ]; then \
-          echo \"Kept $branch: couldn't fetch PR head\"; \
-        else \
-          echo \"Kept $branch: commits not in merged PR #$missed_pr\"; \
-        fi; \
-        continue; \
-      fi; \
+      [ -z \"$kept\" ] || { echo \"Kept $branch: $kept\"; continue; }; \
       if [ -n \"$wt\" ]; then \
         $run git worktree remove \"$wt\" || { echo \"Kept $branch: $wt was not removed\"; continue; }; \
         [ -n \"$run\" ] || echo \"Removed worktree $wt\"; \

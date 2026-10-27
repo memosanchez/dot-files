@@ -48,6 +48,12 @@ upstream's `code-review`) are vendored too; only skills with no upstream
 counterpart (`standup`, `confirm-findings`, `pre-commit-check`) are simply ours.
 _Avoid_: plugin skill, third-party skill
 
+**External skill**:
+A skill installed in `~/.claude/skills` that this repo deliberately does not
+own, such as one installed from another author's repo. Neither a vendored
+skill nor the stale copy a skill rename leaves behind.
+_Avoid_: third-party skill, plugin skill
+
 **Local edit**:
 A deliberate change this repo carries on top of a vendored skill's upstream
 text, such as the `setup-skills` rename or Linear tracker support.

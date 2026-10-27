@@ -167,7 +167,7 @@ sync_skills() {
     [ -f "${live_skill_dir}SKILL.md" ] || continue
     skill_name="$(basename "$live_skill_dir")"
     if ! find "$name/skills" -mindepth 2 -maxdepth 2 -type d -name "$skill_name" | grep -q .; then
-      echo "⚠️  $destination/skills/$skill_name is not in this repo (stale rename or third-party install) — consider deleting it"
+      echo "⚠️  $destination/skills/$skill_name is not in this repo (stale rename or external skill) — consider deleting it"
     fi
   done
 }
